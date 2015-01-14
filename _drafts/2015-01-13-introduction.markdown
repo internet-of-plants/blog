@@ -8,14 +8,14 @@ Keeping plants alive in an office without regular hours is hard: Either everybod
 This blog documents our journey towards the realization of such a system, dubbed the Internet of Plants (IoP).
 
 ## How does it work, exactly?
-To the end user, the IoP consists of two different entities: one sensor node per plant, which is plugged into its flower pot, and a web interface, whic is maintained by the so-called display node. The IoP is self-configuring. That means the user won't have to re-flash their nodes when they change plants, or register each new plant with the IoP. Whenever a new plant is detected in the IoP, the web interface will show a new, blank spot for this plant. Now, the humidity needs and a picture of the plant can be added by the user, and that's it.   
+To the end user, the IoP consists of two different entities: one sensor node per plant, which is plugged into its flower pot, and a web interface, which is maintained by the so-called display node. The IoP is self-configuring. That means the user won't have to re-flash their nodes when they change plants, or register each new plant with the IoP. Whenever a new plant is detected in the IoP, the web interface will show a new, blank spot for this plant. Now, the humidity needs and a picture of the plant can be added by the user, and that's it.   
 A plant has three statuses: happy, okay or thirsty. Whenenver a member of the IoP feels thirsty, it will send a tweet and/or E-Mail. After it has been watered, it will tweet and/or E-Mail again to prevent overhydration. Additionally, the status of all plants can be checked through the web interface. This way, users can see that they should water an “okay” plant before a long weekend even though it did not cry for help yet.
 
 ## Protocol stack
 - CoAP (libcoap and Californium)
 - RPL/AODVv2 <!-- TODO: how do we do this if the display node doesnt RIOT? -->
 - 6LowPAN
-- IEEE 802.15.5.
+- IEEE 802.15.4
 
 ## Hard- and Software
 ### Plant nodes
