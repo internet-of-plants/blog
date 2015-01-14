@@ -14,18 +14,18 @@ A plant has three statuses: happy, okay or thirsty. Whenenver a member of the Io
 ## Protocol stack
 - CoAP (libcoap and Californium)
 - RPL/AODVv2 <!-- TODO: how do we do this if the display node doesnt RIOT? -->
-- 6LowPAN
+- 6LoWPAN
 - IEEE 802.15.4
 
 ## Hard- and Software
 ### Plant nodes
 For the plant nodes, we chose to use the SAM R21 boards equipped with a [DFROBOT SEN0114 humidity sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) because it is robust against oxidation caused by moist soil and approved for plant-monitoring.
-All plant nodes run RIOT, an embedded Operating System designed for the Internet of Things, featuring a network stack running 6LowPAN over IEEE802.15.4. Plant nodes will have an application which registers them with the IoP, reads their humidity sensor and reports back to the display node using CoAP.
+All plant nodes run RIOT, an embedded Operating System designed for the Internet of Things, featuring a network stack running 6LoWPAN over IEEE802.15.4. Plant nodes will have an application which registers them with the IoP, reads their humidity sensor and reports back to the display node using CoAP.
 The SAM R21 board is somewhat costly, so it might not be ideal for others that don't happen to have some lying around. However, the beauty of RIOT is that the base code can be re-used: As long as there is a RIOT port for the board you want to use, all it takes is one changed line in the Makefile to deploy the IoP code on it.
 
 ### Display node
 The display node is a Raspberry Pi. It manages all plants, collects their humidity statuses and posts changes to the web interface. To accomplish this, it serves as a web server and runs Californuim. All CoAP messages received through Californium are handled passed to the server if need be.  
-the display node also functions as the border router, connecting our Internet of Plants to the “big” internet. To do this, it is equipped with both with an Ethernet connection to the internet and an R-IDGE 6LowPAN USB Router for communication with the plant nodes.
+the display node also functions as the border router, connecting our Internet of Plants to the “big” internet. To do this, it is equipped with both with an Ethernet connection to the internet and an R-IDGE 6LoWPAN USB Router for communication with the plant nodes.
 
 ## Code
 All of our code can be found [on github](https://github.com/internet-of-plants). 
