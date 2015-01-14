@@ -12,7 +12,7 @@ To the end user, the IoP consists of two different entities: one sensor node per
 A plant has three statuses: happy, okay or thirsty. Whenenver a member of the IoP feels thirsty, it will send a tweet and/or E-Mail. After it has been watered, it will tweet and/or E-Mail again to prevent overhydration. Additionally, the status of all plants can be checked through the web interface. This way, users can see that they should water an “okay” plant before a long weekend even though it did not cry for help yet.
 
 ## Protocol stack
-- CoAP (libcoap and Californium)
+- CoAP ([libcoap](http://libcoap.sourceforge.net) and [Californium](https://eclipse.org/californium/))
 - RPL/AODVv2 <!-- TODO: how do we do this if the display node doesnt RIOT? -->
 - 6LowPAN
 - IEEE 802.15.5.
