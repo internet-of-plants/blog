@@ -19,7 +19,7 @@ A plant has three statuses: happy, okay or thirsty. Whenenver a member of the Io
 
 ## Hard- and Software
 ### Plant nodes
-For the plant nodes, we chose to use the SAM R21 boards equipped with a [DFROBOT SEN0114 humidity sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599)<!--, because TODO-->.  
+For the plant nodes, we chose to use the SAM R21 boards equipped with a [DFROBOT SEN0114 humidity sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) because it is robust against oxidation caused by moist soil and approved for plant-monitoring.
 All plant nodes run RIOT, an embedded Operating System designed for the Internet of Things, featuring a network stack running 6LowPAN over IEEE802.15.4. Plant nodes will have an application which registers them with the IoP, reads their humidity sensor and reports back to the display node using CoAP.
 The SAM R21 board is somewhat costly, so it might not be ideal for others that don't happen to have some lying around. However, the beauty of RIOT is that the base code can be re-used: As long as there is a RIOT port for the board you want to use, all it takes is one changed line in the Makefile to deploy the IoP code on it.
 
