@@ -92,13 +92,16 @@ a {
     color: $brand-color;
     text-decoration: none;
 
-    &:visited {
-        color: darken($brand-color, 15%);
+    &:hover {
+        color: darken($brand-color, 6%);
     }
+}
+
+.footer-col-wrapper a {
+    color: $footer-link-color;
 
     &:hover {
-        color: $text-color;
-        text-decoration: underline;
+        color: darken($footer-link-color, 6%);
     }
 }
 
