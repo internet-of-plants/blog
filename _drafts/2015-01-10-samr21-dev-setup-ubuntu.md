@@ -13,7 +13,7 @@ categories: jekyll update
 * Add flashing section
     * why slow?
 * perhaps try eclipse based debugging just for fun?
-
+* Can flashing be done without r00t?
 
 
 
@@ -92,6 +92,10 @@ Build the example app
 
 # Debugging (?)
 
+# Troubleshooting
+
+* The CMSIS-DAP interface for flashing and debugging is quite slow (should be around 2KiB/s). So when flashing, you might need to wait a little longer.
+* If you get a permission error, such as "Unable to open CMSIS-DAP device": Flashing might need to be performed as root.
 
 # Sources
 
