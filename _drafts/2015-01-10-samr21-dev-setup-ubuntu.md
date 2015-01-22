@@ -1,9 +1,14 @@
 ---
 layout: post
 title:  Development setup with the Samr21 xproblablub on Ubuntu 14.10
-date:   2015-01-10
 categories: jekyll update
 ---
+
+This post introduces the hardware that we use as our plant monitoring nodes, detailing the specs as well as how to get them up and running for development.
+
+<!-- more -->
+
+
 
 # TODO
 
