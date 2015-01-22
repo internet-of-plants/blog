@@ -7,12 +7,7 @@ cover_image: blog-cover.jpg
 
 excerpt: "Incorporated provides a great typography, responsive design, author details, semantic markup and more."
 
-author:
-  name: Karri Saarinen
-  twitter: karrisaarinen
-  gplus: 100687498195339762535 
-  bio: Co-founder, Design
-  image: ks.png
+author: watrli
 
 date: 2014-01-01
 ---

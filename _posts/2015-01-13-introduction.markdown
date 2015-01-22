@@ -4,11 +4,7 @@ title:  "The Internet of Plants: turning your collective black thumb green"
 date:   2015-01-16 17:05:58
 categories: About, Introduction
 permalink: /about/
-author:
-  name: watr.li
-  twitter: watr_li
-  bio: Building the Internet of Plants
-  image: logo-big.png
+author: watrli
 ---
 Keeping plants alive in an office without regular hours is hard: Either everybody thinks their colleagues have already watered the plants or multiple people water the same plant, resulting in either drought or overhydration. This can be solved with technology: If each plants' humidity status is displayed publicly, co-workers can take matters into their own hands without fear of interfering with an absent colleagues' plant-watering scheme.
 
