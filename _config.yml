@@ -43,6 +43,24 @@ inc:
 
   # Setup your fonts, colors etc at _assets/stylesheets/main.scss
 
+
+authors:
+  watrli:
+    name: watr.li
+    twitter: watr_li
+    bio: Building the Internet of Plants
+    image: logo-big.png
+  lucas:
+    name: Lucas Jenß
+    twitter: fresskoma
+    bio: Major disruptor
+    image: authors/lucas.jpg
+  lotte:
+    name: Lotte Steenbrink
+    twitter: lotterleben
+    bio: Because I can!
+    image: authors/lotte.jpg
+
 url:          "http://watr.li"
 source:      .
 destination: ./_site
