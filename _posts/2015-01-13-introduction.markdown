@@ -4,10 +4,17 @@ title:  "The Internet of Plants: turning your collective black thumb green"
 date:   2015-01-16 17:05:58
 categories: About, Introduction
 permalink: /about/
+author:
+  name: watr.li
+  twitter: watr_li
+  bio: Building the Internet of Plants
+  image: logo-big.png
 ---
 Keeping plants alive in an office without regular hours is hard: Either everybody thinks their colleagues have already watered the plants or multiple people water the same plant, resulting in either drought or overhydration. This can be solved with technology: If each plants' humidity status is displayed publicly, co-workers can take matters into their own hands without fear of interfering with an absent colleagues' plant-watering scheme.
 
 This blog documents our journey towards the realization of such a system, dubbed the Internet of Plants (IoP).
+
+<!-- more -->
 
 ## How does it work, exactly?
 To the end user, the IoP consists of two different entities: one sensor node per plant, which is plugged into its flower pot, and a web interface, which is maintained by the so-called display node. The IoP is self-configuring. That means the user won't have to re-flash their nodes when they change plants, or register each new plant with the IoP. Whenever a new plant is detected in the IoP, the web interface will show a new, blank spot for this plant. Now, the humidity needs and a picture of the plant can be added by the user, and that's it.
@@ -31,4 +38,4 @@ The display node is a [Raspberry Pi](http://www.raspberrypi.org). It manages all
 The display node also functions as the border router, connecting our Internet of Plants to the “big” internet. To do this, it is equipped with both an Ethernet connection to the internet and a [R-IDGE 6LoWPAN USB Router](http://rosand-tech.com/products/r-idge/prod.html) for communication with the plant nodes.
 
 ## Code
-All of our code can be found [on github](https://github.com/internet-of-plants).
+All of our code can be found [on github](https://github.com/watr-li).
