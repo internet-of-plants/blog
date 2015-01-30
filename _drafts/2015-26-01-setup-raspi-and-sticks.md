@@ -1,3 +1,9 @@
+---
+layout: post
+title: Setting up the Raspberry
+author: watrli
+---
+
 # Setting up the Raspberry
 
 While providing our office flowers with intelligent equipment to measure humidity and provide communication abilities
