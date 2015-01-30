@@ -10,6 +10,8 @@ While providing our office flowers with intelligent equipment to measure humidit
 to form a network over IEEE802.15.4 with other plants, this network is autonomous and separated from the Internet.  
 To provide a connection between this network and the Internet we need to setup a border router to enhance the _network of plants_ to the _Internet of Plants_.
 
+<!-- more -->
+
 ## Install the Raspbian on the Raspberry Pi
 First we need to download a recent [Raspbian](http://www.raspbian.org/) Image to be flashed on the SD Card as operating system.  
 We use the __Rasbian Debian Wheezy, version December 2014__ which can be downloaded here: http://www.raspberrypi.org/downloads/.  
