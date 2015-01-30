@@ -5,11 +5,11 @@ title: One does not fit all
 subtitle: "Choosing the routing protocol"
 cover_image: blog-cover.jpg
 
-<!--excerpt: "Incorporated provides a great typography, responsive design, author details, semantic markup and more." -->
+#excerpt: "Incorporated provides a great typography, responsive design, author details, semantic markup and more."
 
 author: lotte
 
-date: 2015-23-01
+date: 2015-01-23
 ---
 
 TODO: write this.
