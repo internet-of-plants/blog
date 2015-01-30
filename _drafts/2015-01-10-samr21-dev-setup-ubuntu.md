@@ -32,8 +32,8 @@ The following packages are necessary for building the necessary tools and the RI
 
 They are easily installable through apt by running
 
-    sudo apt-get install git pkg-config autoconf libudev-dev libusb-1.0-0-dev
-
+    sudo apt-get install git pkg-config autoconf libudev-dev libusb-1.0-0-dev libtool unzip
+ 
 
 
 
