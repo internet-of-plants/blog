@@ -33,6 +33,9 @@ layout: base
         <img src="/images/{% author image %}" class="avatar">
         <div>
             <h2 class="title"><a href="{{ post.url }}" rel="prefetch">{{ post.title }}</a></h2>
+            {% if post.subtitle %}
+                <h3 class="subtitle">{{ post.subtitle }}</h3>
+            {% endif %}
             <p>{{ post.excerpt }}</p>
             <p><a href="{{ post.url }}">» read more</a></p>
             <div class="meta">

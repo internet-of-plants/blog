@@ -75,8 +75,15 @@ a {
     }
 
     .title {
-        margin:0em 0 0.6em;
+        margin:0em 0 0.94rem;
     }
+
+    .subtitle {
+        margin: -0.94rem 0 0 0;
+        font-size: 0.9em;
+
+    }
+
 
     .avatar {
         float:left;
