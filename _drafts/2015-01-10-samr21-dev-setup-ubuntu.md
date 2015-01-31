@@ -1,21 +1,24 @@
 ---
 layout: post
-title:  Development setup with the Samr21 xproblablub on Ubuntu 14.10
+title: The Atmel SAM R21 
+subtitle: Setting up a RIOT development environment
 categories: jekyll update
 author: lucas
+cover_image: covers/samr21.jpg
 ---
 
-This post introduces the hardware that we use as our plant monitoring nodes, detailing the specs as well as how to get them up and running for development.
+
+
+In the internet of plants, we have decided to use the [Atmel SAM R21](http://www.atmel.com/tools/ATSAMR21-XPRO.aspx) to monitor our green friends. The SAMR is a Cortex M0 based platform with an on-board IEEE 802.15.4 Wireless module, TODO: expand
+
+This post explains the general process of setting up a development environment for RIOT applications on Ubuntu 14.10, taking into account the peculiarities of the SAMR board.
 
 <!-- more -->
-
-
 
 # TODO
 
 * Explain what OpenOCD is?
 * Make sources look nicer
-* Add picture
 * Add flashing section
     * why slow?
 * perhaps try eclipse based debugging just for fun?
@@ -40,7 +43,8 @@ They are easily installable through apt by running
 # Building OpenOCD
 
 The current release (v0.8.0) of [OpenOCD](http://openocd.sourceforge.net/) does not contain configuration files for the Samr21 board, so it has to be built from source. OpenOCD also requires hidapi, which is not available as a package on Ubuntu 14.10. The following script will clone, build and install hidapi if all goes well:
-
+    
+    :bash:
     TMP=$(mktemp) &&
         rm -r $TMP &&
         mkdir -p $TMP &&
@@ -55,6 +59,7 @@ The current release (v0.8.0) of [OpenOCD](http://openocd.sourceforge.net/) does 
 
 Now that all requirements are installed, OpenOCD can be built:
 
+    :bash:
     TMP=$(mktemp) &&
         rm -r $TMP &&
         mkdir -p $TMP &&
@@ -87,6 +92,7 @@ Note that a warning could be displayed that there are conflicting package names 
 
 Now that all the requirements are setup, a very basic RIOT-based application can be built and flashed onto the board. So after RIOT is cloned into a directory of choice (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)) we can navigate to the `examples/hello-world` directory and build the application:
 
+    :bash:
     export BOARD=samr21-xpro &&
         make
 
@@ -100,7 +106,7 @@ Build the example app
 
 # Troubleshooting
 
-* The CMSIS-DAP interface for flashing and debugging is quite slow (should be around 2KiB/s). So when flashing, you might need to wait a little longer.
+* The CMSIS-DAP interface for flashing and debugging is quite slow (should be around 2KiB/s). So when flashing, you might need to wait a little longer. [Thread about CMIS-DAP speed](http://sourceforge.net/p/openocd/mailman/message/32496519/) [Patch that makes it a little faster](http://openocd.zylin.com/#/c/2356/)
 * If you get a permission error, such as "Unable to open CMSIS-DAP device": Flashing might need to be performed as root.
 
 # Sources
