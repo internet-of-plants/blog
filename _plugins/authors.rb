@@ -1,5 +1,3 @@
-require 'pp'
-
 module AuthorsInjector
   class Generator < Jekyll::Generator
     def generate(site)
@@ -32,8 +30,6 @@ module AuthorsInjector
 
       data['authors'][0]['primary'] = true
       data['author'] = data['authors'][0]
-
-      pp post.data
     end
 
     def site_authors(post)
