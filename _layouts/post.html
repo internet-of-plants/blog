@@ -2,9 +2,8 @@
 layout: base
 ---
 {% if page.cover_image %}
-<div class="blog-cover">
+<div class="blog-cover {% if page.dont_dim_cover %} not-dimmed {% endif %}" style="background-image:url(/images/{{ page.cover_image }})">
     <div>
-        <img src="/images/{{ page.cover_image }}" class="image">
     </div>
     <section></section>
 </div>
