@@ -30,7 +30,7 @@ layout: base
   {% unless post.draft %}
     <section class="index">
 
-        <img src="/images/{% author image %}" class="avatar">
+        <img src="/images/{{ post.author.image }}" class="avatar">
         <div>
             <h2 class="title"><a href="{{ post.url }}" rel="prefetch">{{ post.title }}</a></h2>
             {% if post.subtitle %}
@@ -39,7 +39,7 @@ layout: base
             <p>{{ post.excerpt }}</p>
             <p><a href="{{ post.url }}">» read more</a></p>
             <div class="meta">
-                Written By <address>{% author name %}</address> &mdash;
+                Written By <address>{{ post.author.name }}</address> &mdash;
                 <time pubdate datetime="{{ post.date | date: "%Y-%d-%B" }}" title="{{ post.date | date: "%B %d, %Y" }}">{{ post.date | date: "%B %d, %Y" }}</time>
             </div>
         </div>

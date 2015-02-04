@@ -64,6 +64,10 @@ article {
             margin:1em 0 0;
         }
 
+        & + address {
+            margin-top: 34px;
+        }
+
     }
 
     p {
