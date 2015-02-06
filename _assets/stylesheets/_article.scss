@@ -185,7 +185,7 @@ article {
 
     pre {
         border: 0;
-        padding: 1.5em 3em;
+        padding: 1.5em 2em;
         margin:0 0 1.5em;
         background: rgba(197,192,190, 0.3);
         border: 0;
@@ -201,7 +201,12 @@ article {
             border:0;
         }
     }
-    
+
+    .highlight.wide pre {
+        width: 125%;
+        margin-left: -12.5%;
+    }
+
     code {
         border-bottom:1px solid #ddd;
         border-radius:2px;
