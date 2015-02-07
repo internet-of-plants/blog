@@ -4,63 +4,39 @@ title: Raspi/Californium/Play2
 author: lucas
 ---
 
-* The raspberry serves both as coap client/server as well as webserver for the watr-li management dashboard (manages nodes)
-* Dashboard (play app) is started, which then starts the coap client/server
-* background job is an actor started in the play's object Global 
-* deploying application to the raspi: `./activator stage` then rsync to raspi and start with low memory settings
-* sqlite because easy and low memory footprint
+On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime" (whatever that even means for websites). In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the piece fit and can be made to work together. 
 
-TODO: connect the stuff to usb0
-TODO: how to test web-interface locally
+<!-- more -->
 
-In build.sbt before building add (if openjdk7 is used and you have Java 8):
+![](images/play2-californium/architecture.png)
 
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
-
-First
-
-    ./activator stage # on the build system
-
-Then rsync `target/universe/stage` to raspi. Then run
-
-    JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" ../bin/iop-dashboard
-
-Woohooo!
+The graphic shows an abstract overview of our setup. On the bottom left we have one of our plant nodes which communicates with the [Eclipse Californium](https://www.eclipse.org/californium/) Server (TODO why cf?) via the CoAP protocol. To develop the web interface we have chosen the [Play framework](https://playframework.com/) (TODO why?). The communication between the Californium Server and the web application is established through an [Akka](http://akka.io/) Actor, which is the convention for asynchronous communication within Play. Lastly, the user's browser communicates with the Play application server using HTTP as well as the WebSocket protocol for "realtime" updates. Communication between actors is highlighted in red. No protocol is mentioned because no serialization of the messages is necessary, since the subsystems operate inside the same Java Virtual Machine, thus making it possible to simply pass Java objects around.
 
 
 
-# Setup
 
-Uebersichtsbild in dem klar wird dass Californium mit Play2 auf dem Raspi laeuft und ueber CoAP mit den nodes redet.
+# Creating a Play application
 
-Eventuell auch kurz warum wir californium/play2 benutzen.
+In order to create a new Play application, Java has to be installed on your system. Please follow the guide on [playframework.com](https://playframework.com/documentation/2.3.x/Installing) on how to install the Play framework itself. After the installation you're ready to create a new Play app. Since this article does not intend to be an introduction to the Play framework, only the necessary steps are shown here. For more details check out the framework's [getting started guide](https://playframework.com/documentation/2.3.x/Home).
 
-
-# Creating a new Play application
-
-* Play2 (activator) has to be installed first!
-* This article does not intend to be an introduction to play 2 (link to [play2 getting started](https://playframework.com/documentation/2.3.x/Home))
-* Rough steps to get Californium into Play2 and receive/send messages.
-* We're going to use Java because it will be more familiar to a wider audience, but Play-scala should work just the same
-
-.
+Play offers the option for development in Scala. Since more developers will be familiar with Java, this article relies completely on a Java implementation. To create a new Play application based on the Java template, run the following in your console after installing Play:
 
     activator new play-californium play-java
 
-This creates a new directory `play-californium` with a minimal Play2 template. You can start the application by running `./activator run`, which will create a site that is browseable through `http://localhost:9000`.
+This will create a new directory `play-californium` in the current directory, to which we can switch an execute `./activator run`. This will start a webserver at port 9000, so navigating to `http://localhost:9000` should display the Play welcome message. 
+
+It should be noted that Play automatically detects changes in the project directory after each request to the webserver, so it is not necessary to restart it after source code changes.
 
 
 # Adding Eclipse Californium
 
-To add Californium as a dependency to the Play application, we include the following in the `build.sbt` file in the project's root directory:
+Now that we have a very basic Play application set up we want to add Californium as a dependency. To do this, we include the following line in the `build.sbt` file within the project's root directory:
 
     libraryDependencies += "org.eclipse.californium" % "californium-core" % "1.0.0-M3" 
 
 Note that the statement has to be surrounded by newlines. This is a convention of the Scala Build Tool (SBT) which is used by Play. After adding said line and re-running `./activator`, the dependency should now be included in the project.
 
 If 1.0.0-M3 should not be the [current release](https://oss.sonatype.org/#nexus-search;gav~org.eclipse.californium~californium-core~~~) of `californium-core` then you will have to update the last segment of the above dependency to match the current version designation.
-
-
 
 
 # Starting a Californium Server
@@ -227,6 +203,30 @@ In order to send messages to the resource we still need to define a handler for 
 
 In the `handlePUT` method we notify the server actor that a message has been received through a `CoapMessageReceived` instance containing the message's paylod. The second parameter of `tell` is the sending actor. Since we're not in an actor context and do not need to receive a response from the actor, we can simply pass null. Lastly we respond with the `CHANGED` response code which indicates that the request was successful but did not result in the creation of a new resource. TODO: Perhaps use POST?
 
+# Misc 
+
+* The raspberry serves both as coap client/server as well as webserver for the watr-li management dashboard (manages nodes)
+* Dashboard (play app) is started, which then starts the coap client/server
+* background job is an actor started in the play's object Global 
+* deploying application to the raspi: `./activator stage` then rsync to raspi and start with low memory settings
+* sqlite because easy and low memory footprint
+
+TODO: connect the stuff to usb0
+TODO: how to test web-interface locally
+
+In build.sbt before building add (if openjdk7 is used and you have Java 8):
+
+    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+
+First
+
+    ./activator stage # on the build system
+
+Then rsync `target/universe/stage` to raspi. Then run
+
+    JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" ../bin/iop-dashboard
+
+Woohooo!
 
 
 
