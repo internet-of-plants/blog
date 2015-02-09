@@ -139,6 +139,26 @@ The CMSIS-DAP interface for flashing and debugging [is quite slow](http://source
 
 
 
+# Bonus: RIOT native mode
+
+In addition to running the application directly on the target hardware, RIOT also features a target called `native`, which runs the application inside the host operating system. This is especially useful when flashing the devices is comparatively slow, as is the case for the SAM R21 board.
+
+If you want to use native mode, the only thing required is a 32-bit version of libc installed on the system:
+
+    sudo apt-get install libc6-dev-i386
+
+After installing this dependency you can then return to the directory of the example hello world application and invoke
+
+    :bash:
+    export BOARD=native &&
+        make &&
+        make term
+
+For native mode, the build system creates a 32-bit binary in the `bin/native` directory. The only thing `make term` then has to do is running that binary. You should see the same output as when running the application on the board, except for the board's name and the MCU.
+
+
+
+
 # That's all, folks!
 
 Now that the development environment for RIOT has been set up and applications can be flashed onto the board, you're ready to develop your first RIOT-based IoT application!
