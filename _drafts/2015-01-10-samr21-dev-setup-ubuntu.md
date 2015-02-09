@@ -4,23 +4,24 @@ title: The Atmel SAM R21
 subtitle: Setting up a RIOT development environment
 categories: jekyll update
 author: lucas
+date: 2015-02-09
 cover_image: covers/samr21.jpg
 ---
 
 
 
-For the internet of plants, we have decided to use the [Atmel SAM R21](http://www.atmel.com/tools/ATSAMR21-XPRO.aspx), a Cortex M0 based platform with an on-board IEEE 802.15.4 wireless module, to monitor our green friends.This post explains the general process of setting up a development environment for RIOT applications on Ubuntu 14.10, taking into account the peculiarities of the SAM R21 board.
+For the internet of plants, we have decided to use the [Atmel SAM R21](http://www.atmel.com/tools/ATSAMR21-XPRO.aspx), a Cortex M0 based platform with an on-board IEEE 802.15.4 wireless module, to monitor our green friends. This post explains the general process of setting up a development environment for RIOT applications on Ubuntu 14.10, taking into account the peculiarities of the SAM R21 board.
 
 <!-- more -->
 
 # Package requirements
 
-The following packages are needed for building the necessary tools and the RIOT application:
+The following packages are needed to build the necessary tools and the RIOT application:
 
 * General: git, pkg-config, autoconf, libtool, unzip
 * OpenOCD: libudev-dev, libusb-1.0-0-dev
 
-They are easily installable through apt by running
+They can be installed through apt by running
 
     sudo apt-get install git pkg-config autoconf \
         libudev-dev libusb-1.0-0-dev libtool unzip
@@ -30,11 +31,13 @@ In addition it is recommendable to update Ubuntu to the latest version after ins
     sudo apt-get update &&
         sudo apt-get dist-upgrade
 
+**Warning:** Running a `dist-upgrade` is a potentially destructive operation, so it is **NOT** recommended if you don't have a dedicated installation of Ubuntu 14.10 for this excercise.
+{: .alert .alert-danger }
 
 
 # Building OpenOCD
 
-The Open On-Chip-Debugger (OpenOCD) is used by the RIOT buildsystem for flashing the application onto the board and to debug it. The current release (v0.8.0) of [OpenOCD](http://openocd.sourceforge.net/), however, does not contain configuration files for the SAM R21 board, so it has to be built from source. OpenOCD also requires hidapi, which is not available as a package on Ubuntu 14.10. The following script will clone, build and install hidapi if all goes well:
+The Open On-Chip-Debugger (OpenOCD) is used by the RIOT build system for flashing the application onto the board and to debug it. The current release (v0.8.0) of [OpenOCD](http://openocd.sourceforge.net/), however, does not contain configuration files for the SAM R21 board, so it has to be built from source. OpenOCD also requires hidapi, which is not available as a package on Ubuntu 14.10. The following script will clone, build and install hidapi if all goes well:
     
     :bash:
     TMP=$(mktemp) &&
@@ -71,9 +74,7 @@ Now that all requirements are installed, OpenOCD can be built:
 
 # Installing the toolchain
 
-The "[GNU Tools for ARM Embedded Processors](https://launchpad.net/gcc-arm-embedded)" toolchain (as recommended in [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Board:-Samr21-xpro)) can easily be installed via apt using the following script.
-
-Note that a warning could be displayed that there are conflicting package names with the Debian apt repositories. That warning is already taken into consideration here and you can safely proceed by pressing enter. Also note that this installs the 64-bit version of the toolchain.
+The 64-bit version of the "[GNU Tools for ARM Embedded Processors](https://launchpad.net/gcc-arm-embedded)" toolchain (as recommended in [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Board:-Samr21-xpro)) can be installed via apt using the following script.
 
     sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi &&
         sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded &&
@@ -81,11 +82,13 @@ Note that a warning could be displayed that there are conflicting package names 
         sudo apt-get install gcc-arm-none-eabi=4.9.3.2014q4-0utopic12
 {: .wide }
 
+**Note:** A warning could be displayed that there are conflicting package names with the Debian apt repositories. That warning is already taken into consideration here and you can safely proceed by pressing enter.
+{: .alert .alert-info }
 
 
-# Building the RIOT example application
+# Building a RIOT example application
 
-Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. Cloning RIOT (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)), switching to the directory of the example hello world application and building it is performed by the following script:
+Now that all the requirements are set up, a RIOT-based application can be built. Cloning RIOT (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)), switching to the directory of the example hello world application and building it is performed by the following script:
 
     :bash:
     git clone https://github.com/RIOT-OS/RIOT.git &&
@@ -98,9 +101,9 @@ The only non-standard line here is the definition of the `BOARD` environment var
 
 # Preparations for flashing
 
-In order to be able to flash the application onto the board without root privileges, a couple of additional customizations are necessary. First we need to add your user do the `dialout` group by running the following command:
+In order to be able to flash the application onto the board without root privileges, a couple of additional customizations are necessary. First we need to add our user do the `dialout` group by running the following command:
 
-    sudo usermod --append --groups dialout <your username>
+    sudo usermod --append --groups dialout <our username>
 
 This is required in order to capture the output from the board's serial console, which is mounted as `/dev/ttyACM[0-9]+` and belongs to the `dialout` group by default. 
 
