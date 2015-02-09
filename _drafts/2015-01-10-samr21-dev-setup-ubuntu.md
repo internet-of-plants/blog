@@ -116,7 +116,7 @@ This adds your user to the `dialout` group, which will allow it to access the se
     export BOARD=samr21-xpro &&
         make term
 
-Now we will be able to see the output we can flash the application. Again, we have to take some extra steps so that this can be done without requiring root access. When using OpenOCD with the hidapi, `/dev/hidraw[0-9]+` devices are created. In order to access these, we have to create a new file in `/etc/udev/rules.d`. We will call this file `99-hidraw-permissions.rules` and add the following content:
+Now that we will be able to see the output we can flash the application. Again, we have to take some extra steps so that this can be done without requiring root access. When using OpenOCD with the hidapi, `/dev/hidraw[0-9]+` devices are created. In order to access these, we have to create a new file in `/etc/udev/rules.d`. We will call this file `99-hidraw-permissions.rules` and add the following content:
 
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"
 
