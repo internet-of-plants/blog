@@ -110,7 +110,9 @@ The next step is to get the application onto the board, run it and see the outpu
 **Note:** You need to log out and back in for the user group changes to take effect!
 {: .alert .alert-warning }
 
-This adds your user to the `dialout` group, which will allow it to access the serial console of the SAM R21 without requiring root privileges. Having the proper privileges we can then start [pyterm](http://pyterm.sourceforge.net/), a serial port terminal emulator written in Python, listening to the output of the board:
+This adds your user to the `dialout` group, which will allow it to access the serial console of the SAM R21 without requiring root privileges.
+
+We can now switch to our second terminal and start [pyterm](http://pyterm.sourceforge.net/), a serial port terminal emulator written in Python, listening to the output of the board:
 
     :bash:
     export BOARD=samr21-xpro &&
