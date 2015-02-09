@@ -110,13 +110,15 @@ The next step is to get the application onto the board, run it and see the outpu
 **Note:** You need to log out and back in for the user group changes to take effect!
 {: .alert .alert-warning }
 
-This adds your user to the `dialout` group, which will allow it to access the serial console of the SAM R21 without requiring root privileges. Having the proper privileges we can then start [pyterm](http://pyterm.sourceforge.net/), a serial port terminal emulator written in Python, listening to the output of the board:
+This adds your user to the `dialout` group, which will allow it to access the serial console of the SAM R21 without requiring root privileges.
+
+We can now switch to our second terminal and start [pyterm](http://pyterm.sourceforge.net/), a serial port terminal emulator written in Python, listening to the output of the board:
 
     :bash:
     export BOARD=samr21-xpro &&
         make term
 
-Now that we will be able to see the output we can flash the application. Again, we have to take some extra steps so that this can be done without requiring root access. When using OpenOCD with the hidapi, `/dev/hidraw[0-9]+` devices are created. In order to access these, we have to create a new file in `/etc/udev/rules.d`. We will call this file `99-hidraw-permissions.rules` and add the following content:
+Now we will be able to see the output we can flash the application. Again, we have to take some extra steps so that this can be done without requiring root access. When using OpenOCD with the hidapi, `/dev/hidraw[0-9]+` devices are created. In order to access these, we have to create a new file in `/etc/udev/rules.d`. We will call this file `99-hidraw-permissions.rules` and add the following content:
 
     KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"
 
