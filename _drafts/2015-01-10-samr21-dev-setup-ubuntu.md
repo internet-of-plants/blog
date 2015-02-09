@@ -13,7 +13,9 @@ For the internet of plants, we have decided to use the [Atmel SAM R21](http://ww
 
 <!-- more -->
 
+# ToDO
 
+* HTTPS Git URLS
 
 # Package requirements
 
@@ -87,7 +89,7 @@ Note that a warning could be displayed that there are conflicting package names 
 
 # Building the RIOT example application
 
-Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. So after RIOT is cloned into a directory of choice (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)) we can navigate to the `examples/hello-world` directory and build the application:
+Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. TODO: improve! So after RIOT is cloned into a directory of choice (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)) we can navigate to the `examples/hello-world` directory and build the application:
 
     :bash:
     git clone git@github.com:RIOT-OS/RIOT.git &&
