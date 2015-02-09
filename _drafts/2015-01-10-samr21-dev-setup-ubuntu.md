@@ -89,7 +89,7 @@ Note that a warning could be displayed that there are conflicting package names 
 
 # Building the RIOT example application
 
-Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. TODO: improve! So after RIOT is cloned into a directory of choice (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)) we can navigate to the `examples/hello-world` directory and build the application:
+Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. Cloning RIOT (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)), switching to the directory of the example hello world application and building it is performed by the following script:
 
     :bash:
     git clone git@github.com:RIOT-OS/RIOT.git &&
@@ -100,27 +100,48 @@ Now that all the requirements are set up, a very basic RIOT-based application ca
 The only non-standard line here is the definition of the `BOARD` environment variable which tells the RIOT build system which hardware we are targeting. 
 
 
-# Flashing and running the application
+# Preparations for flashing
 
-The next step is to get the application onto the board, run it and see the output it produces. The RIOT build system is already configured to do all of this for the SAMR board, under the assumption that OpenOCD is installed. For this we need two separate terminals: one where the command to flash the board is invoked and the other where the output from the board is displayed. In the first one we execute
+In order to be able to flash the application onto the board without root privileges, a couple of additional customizations are necessary. First we need to add your user do the `dialout` group by running the following command:
 
-    :bash:
     sudo usermod --append --groups dialout <your username>
 
-**Note:** You need to log out and back in for the user group changes to take effect!
+This is required in order to capture the output from the board's serial console, which is mounted as `/dev/ttyACM[0-9]+` and belongs to the `dialout` group by default. 
+
+**Note:** You need to re-login after adding the user to the group.
 {: .alert .alert-warning }
 
-This adds your user to the `dialout` group, which will allow it to access the serial console of the SAM R21 without requiring root privileges. Having the proper privileges we can then start [pyterm](http://pyterm.sourceforge.net/), a serial port terminal emulator written in Python, listening to the output of the board:
+Secondly we need to instruct udev, the device manager, to allow access to the kernel devices created by the hidapi. We do this by creating a new file `99-hidraw-permissions.rules` in the `/etc/udev/rules.d` directory with the following content:
+
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"
+{: .wide }
+
+**Note:** After adding the `udev` permission you have to re-connect the board for the changes to take effect.
+{: .alert .alert-warning }
+
+# Flashing and running the application
+
+The next step is to get the application onto the board, run it and see the output it produces. The RIOT build system is already configured to do all of this for the SAMR board, under the assumption that OpenOCD is installed. For this we need two separate terminals: one where the command to flash the board is invoked and the other where the output from the board is displayed.
+
+
+### Setting up the output terminal
+
+In this terminal we start a [pyterm](http://pyterm.sourceforge.net/) instance, a serial port terminal emulator written in Python, listening to the output of the board:
 
     :bash:
     export BOARD=samr21-xpro &&
         make term
 
-Now that we will be able to see the output we can flash the application. Again, we have to take some extra steps so that this can be done without requiring root access. When using OpenOCD with the hidapi, `/dev/hidraw[0-9]+` devices are created. In order to access these, we have to create a new file in `/etc/udev/rules.d`. We will call this file `99-hidraw-permissions.rules` and add the following content:
+This should result in the following being printed, after which pyterm waits for output from the board:
 
-    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"
+    INFO # Connect to serial port /dev/ttyACM0
+    Welcome to pyterm!
+    Type '/exit' to exit.
 
-This will enable the `plugdev` group, which your default Ubuntu user should already be a part of, to access the kernel devices required for flashing the board. Now that all privileges are set up, we can finally run
+
+### Running the flash command
+
+Now we can switch to the other terminal in which we will invoke the commands to flash the application onto the board:
 
     :bash:
     export BOARD=samr21-xpro &&
@@ -129,7 +150,7 @@ This will enable the `plugdev` group, which your default Ubuntu user should alre
 The CMSIS-DAP interface for flashing and debugging [is quite slow](http://sourceforge.net/p/openocd/mailman/message/32496519/) (should be around 2KiB/s). So when flashing, you might need to wait a little longer. You can also apply an [OpenOCD patch](http://openocd.zylin.com/#/c/2356/) that increases flashing speed by 50-100%.
 {: .alert .alert-warning }
 
-`make flash` flashes and subsequently resets the board, causing the application to run. For our hello world example, it should result in the following output being shown in the terminal window in which `make term` was executed:
+`make flash` flashes and subsequently resets the board, causing the application to run. For our hello world example it should result in the following output being shown in the terminal window in which `make term` was executed:
 
     INFO # kernel_init(): This is RIOT! (Version: 2014.12-285-gfe295)
     INFO # kernel_init(): jumping into first task...
