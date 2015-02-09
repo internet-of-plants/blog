@@ -13,10 +13,6 @@ For the internet of plants, we have decided to use the [Atmel SAM R21](http://ww
 
 <!-- more -->
 
-# ToDO
-
-* HTTPS Git URLS
-
 # Package requirements
 
 The following packages are needed for building the necessary tools and the RIOT application:
@@ -92,7 +88,7 @@ Note that a warning could be displayed that there are conflicting package names 
 Now that all the requirements are set up, a very basic RIOT-based application can be built and flashed onto the board. Cloning RIOT (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)), switching to the directory of the example hello world application and building it is performed by the following script:
 
     :bash:
-    git clone git@github.com:RIOT-OS/RIOT.git &&
+    git clone https://github.com/RIOT-OS/RIOT.git &&
         cd RIOT/examples/hello-world &&
         export BOARD=samr21-xpro &&
         make
@@ -141,7 +137,7 @@ This should result in the following being printed, after which pyterm waits for 
 
 ### Running the flash command
 
-Now we can switch to the other terminal in which we will invoke the commands to flash the application onto the board:
+Now we can switch to the other terminal window in which we will invoke the commands to flash the application onto the board:
 
     :bash:
     export BOARD=samr21-xpro &&
