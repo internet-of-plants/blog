@@ -1,0 +1,36 @@
+title CoAP message forwarding with Californium and Play actors\n
+
+participant WSA
+participant CSA
+participant CS
+participant Outside
+
+
+
+CSA->CS: Initializes\nCalifornium Server
+activate CSA
+activate CS
+CS->CSA: Reference to CS
+
+deactivate CSA
+deactivate CS
+
+note over WSA: WebSocket actor is created
+
+WSA-->CSA: SendMeCoapMessages
+activate CSA
+CSA->CSA: Add to list\n of recipients
+deactivate CSA
+
+note over WSA,CSA,CS,Outside: Time passes...
+
+Outside->CS: CoAP Message
+activate CS
+
+CS-->CSA: CoapMessageReceived\n(payload)
+CS->Outside: CoAP Response
+deactivate CS
+activate CSA
+
+note over CSA: for every recipient
+CSA-->WSA: CoapMessageReceived\n(payload)
