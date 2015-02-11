@@ -4,53 +4,54 @@ title: Setting up the Raspberry
 author: watrli
 ---
 
-# Setting up the Raspberry
+Providing our office flowers with intelligent equipment to measure humidity and giving them the ability to form a network over IEEE 802.15.4 is all well and good. Unfortunately this only enables a gossip network amongst office flowers, which is separated from the internet.
 
-While providing our office flowers with intelligent equipment to measure humidity and provide communication abilities
-to form a network over IEEE802.15.4 with other plants, this network is autonomous and separated from the Internet.  
-To provide a connection between this network and the Internet we need to setup a border router to enhance the _network of plants_ to the _Internet of Plants_.
+To provide a connection between this network and the Internet, thus enabling Humans™ to water the plants whenever they so desire, we need to setup a border router to enhance the _gossip-net of plants_ to the _Internet of Plants_.
 
 <!-- more -->
 
-## Install the Raspbian on the Raspberry Pi
-First we need to download a recent [Raspbian](http://www.raspbian.org/) Image to be flashed on the SD Card as operating system.  
-We use the __Rasbian Debian Wheezy, version December 2014__ which can be downloaded here: http://www.raspberrypi.org/downloads/.  
+# Installing Raspbian on the Raspberry Pi
 
-After the download finished we write the Rasbian image to the SD Card.  
-_A comprehensive guide how to write to a SD Card can be found here: http://elinux.org/RPi_Easy_SD_Card_Setup._
+First we need to download a recent version of [Raspbian](http://www.raspbian.org/), a Linux distribution specifically made for the Raspberry Pi. This image will be flashed onto an SD Card to serve as the operating system. For this post we used __Rasbian Debian Wheezy, version December 2014__, which can be downloaded [here](http://www.raspberrypi.org/downloads).
 
-We insert the fresh flashed SD Card to our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet over _good old ethernet_.  
+After the download finishes we follow the [comprehensive guide](http://elinux.org/RPi_Easy_SD_Card_Setup) on how to flash the image to the SD Card published by [elinux.org](http://elinux.org/RPi_Easy_SD_Card_Setup), which covers Windows, OS X and Linux users.
+
+Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet over _good old_ ethernet.  
+
+TODO: installation/setup procedure (i.e. sd card expansion)
+
 When we finish the installation/setup procedure, restart and login we are finally presented with (or similar):
-```
-Linux raspberrypi 3.12.35+ #730 PREEMPT Fri Dec 19 18:31:24 GMT 2014 armv6l
 
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
+    Linux raspberrypi 3.12.35+ #730 PREEMPT Fri Dec 19 18:31:24 GMT 2014 armv6l
 
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Mon Jan 26 10:13:52 2015
-pi@raspberrypi ~ $
-```
-Note: if you chosen the graphical login and logged in, open a terminal (i.e. click the "black monitor" icon) to proceed.  
-Obviously this only works if you plugged in a mouse or similar.  
-If not, you can hit `CTRL+ESC` to navigate through the Menu and choose `Accessoirees > Terminal` with the arrow keys and hit enter,
-which also opens a new terminal window.
+    The programs included with the Debian GNU/Linux system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
 
+    Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+    permitted by applicable law.
+    Last login: Mon Jan 26 10:13:52 2015
+    pi@raspberrypi ~ $
+{: .wide }
 
-To finish the initial installation, we do an update of the Raspbian to get the most recent versions of the installed packages.  
-We enter one by one:
-```
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
-```
+**Note:** if you've chosen the graphical user interface, open a terminal (i.e. click the "black monitor" icon) to proceed. Of course this only works if you plugged in a mouse or similar. If not, you can hit `CTRL+ESC` to navigate through the Menu and choose `Accessoirees > Terminal` with the arrow keys and hit enter, which also opens a new terminal window.
+{: .alert .alert-info }
+
+To finish the initial installation, we do an update of Raspbian to get the most recent versions of the installed packages. To do this, we run in a terminal:
+
+    :bash:
+    sudo apt-get update &&
+        sudo apt-get upgrade &&
+        sudo apt-get dist-upgrade
+
+**Warning:** Running a `dist-upgrade` is a potentially destructive operation, so it is **NOT** recommended if you don't have a dedicated installation of Raspian for this excercise.
+{: .alert .alert-danger }
+
 - The first line fetches all information for packages and available updates.
-- The second line updates the current installed packages.
-- The third line installs new and updated packages.
+- The second line updates the currently installed packages.
+- The third line installs new and updated packages, including kernel updates.
 
-Now we have a recent foundation of Raspbian to start creating a border router.
+Now we have an up-to-date foundation of Raspbian to start setting up a border router!
 
 # Prepare the Internet of Plants
 After the initial installation of Rasbian we need to configure it further to enable the RasPI acting as border router.  
