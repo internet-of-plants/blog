@@ -6,7 +6,7 @@ body {
     color:$text;
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizelegibility;
-    font-size:17px;
+    font-size:$font-size-base;
 }
 
 .is-visible {
