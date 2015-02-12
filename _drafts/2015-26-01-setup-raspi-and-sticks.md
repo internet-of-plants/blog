@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Setting up the Raspberry
+title: Setting up the Raspberry Pi
 author: watrli
 ---
 
-Providing our office flowers with intelligent equipment to measure humidity and giving them the ability to form a network over IEEE 802.15.4 is all well and good. Unfortunately this only enables a gossip network amongst office flowers, which is separated from the internet.
+Providing our office flowers with intelligent equipment to measure humidity and giving them the ability to form a network over IEEE 802.15.4 is all well and good. Unfortunately, this only creates a network amongst office flowers, which is separated from the internet.
 
-To provide a connection between this network and the Internet, thus enabling Humans™ to know that they should water the plants, we need to setup a border router to enhance the _network of plants_ to the _Internet of Plants_.
+To provide a connection between this network and the Internet, thus enabling Humans™ to know that they should water the plants, we need to setup a border router to evolve the _network of plants_ to the _Internet of Plants_.
 
 <!-- more -->
 
@@ -16,7 +16,7 @@ First we need to download a recent version of [Raspbian](http://www.raspbian.org
 
 After the download finishes we follow the [comprehensive guide](http://elinux.org/RPi_Easy_SD_Card_Setup) on how to flash the image to the SD Card published by [elinux.org](http://elinux.org/RPi_Easy_SD_Card_Setup), which covers Windows, OS X and Linux users.
 
-Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet over _good old_ ethernet.  
+Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet using a _good old_ ethernet cable.  
 
 TODO: installation/setup procedure (i.e. sd card expansion)
 
@@ -55,7 +55,7 @@ Now we have an up-to-date foundation of Raspbian to start setting up a border ro
 
 # Prepare the Internet of Plants
 
-After the initial installation of Rasbian we need to configure it further to enable the RasP to act as a border router.  
+After the initial installation of Raspbian we need to configure it further to enable the Raspberry Pi to act as a border router.  
 
 First we need to enable IPv6. In the initial configuration of Raspbian only IPv4 handling is activated. We can check this by entering `lsmod | grep ipv6` in a terminal. When IPv6 support is not activated, this command returns with no output. To load the IPv6 kernel module we enter `sudo modprobe ipv6`, which should return with no output if the loading succeeded.
 
