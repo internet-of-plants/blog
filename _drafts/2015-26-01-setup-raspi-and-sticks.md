@@ -1,26 +1,28 @@
 ---
 layout: post
-title: Setting up the Raspberry Pi
-author: watrli
+title: Setting up the Border Router
+subtitle: R-Idge 6LoWPAN router meets the Rasperry Pi
+cover_image: covers/raspi.jpg
+authors:
+    - martin
+    - lucas
 ---
 
 Providing our office flowers with intelligent equipment to measure humidity and giving them the ability to form a network over IEEE 802.15.4 is all well and good. Unfortunately, this only creates a network amongst office flowers, which is separated from the internet.
 
-To provide a connection between this network and the Internet, thus enabling Humans™ to know that they should water the plants, we need to setup a border router to evolve the _network of plants_ to the _Internet of Plants_.
+To provide a connection between this network and the Internet, thus enabling Humans™ to know that they should water the plants, we need to setup a border router to evolve the _network of plants_ to the _Internet of Plants_. This post explains how to prepare the border router components, for which we have chosen the Rasperry Pi with 6LoWPAN capabilities provided by the R-Idge USB router.
 
 <!-- more -->
 
 # Installing Raspbian on the Raspberry Pi
 
-First we need to download a recent version of [Raspbian](http://www.raspbian.org/), a Linux distribution specifically made for the Raspberry Pi. This image will be flashed onto an SD Card to serve as the operating system. For this post we used __Rasbian Debian Wheezy, version December 2014__, which can be downloaded [here](http://www.raspberrypi.org/downloads).
-
-After the download finishes we follow the [comprehensive guide](http://elinux.org/RPi_Easy_SD_Card_Setup) on how to flash the image to the SD Card published by [elinux.org](http://elinux.org/RPi_Easy_SD_Card_Setup), which covers Windows, OS X and Linux users.
+First we need to download a recent version of [Raspbian](http://www.raspbian.org/), a Linux distribution specifically made for the Raspberry Pi. This image will be flashed onto an SD Card to serve as the operating system. For this post we used __Rasbian Debian Wheezy, version December 2014__, which can be downloaded [here](http://www.raspberrypi.org/downloads). After the download finishes we follow the [comprehensive guide](http://elinux.org/RPi_Easy_SD_Card_Setup) on how to flash the image to the SD Card published by [elinux.org](http://elinux.org/RPi_Easy_SD_Card_Setup), which covers Windows, OS X and Linux users.
 
 Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet using a _good old_ ethernet cable.  
 
-TODO: installation/setup procedure (i.e. sd card expansion)
+![](images/raspi/raspi-config2.png)
 
-When we finish the installation/setup procedure, restart and login we are finally presented with (or similar):
+When booting the Raspberry Pi, you will be presented with an initial configuration screen for basic setup of the operating system similar to the above. This screen includes the "Expand Filesystem" option which gives you read-write access to the entire SD card from within Raspbian. This one should be definitely selected. For a more detailed explanation on all options please check out [elinux.org](http://elinux.org/RPi_raspi-config). After finishing the setup procedure, restarting and logging in, we are finally presented with (or similar):
 
     Linux raspberrypi 3.12.35+ #730 PREEMPT Fri Dec 19 18:31:24 GMT 2014 armv6l
 
@@ -53,21 +55,22 @@ To finish the initial installation, we do an update of Raspbian to get the most 
 
 Now we have an up-to-date foundation of Raspbian to start setting up a border router!
 
-# Prepare the Internet of Plants
+# Preparing the Internet of Plants
 
-After the initial installation of Raspbian we need to configure it further to enable the Raspberry Pi to act as a border router.  
-
-First we need to enable IPv6. In the initial configuration of Raspbian only IPv4 handling is activated. We can check this by entering `lsmod | grep ipv6` in a terminal. When IPv6 support is not activated, this command returns with no output. To load the IPv6 kernel module we enter `sudo modprobe ipv6`, which should return with no output if the loading succeeded.
-
-Entering `lsmod | grep ipv6` again will present us with:
+After the initial installation of Raspbian we need to configure it further to enable the Raspberry Pi to act as a border router. The first thing to be done is to enable IPv6. In the initial configuration of Raspbian only IPv4 handling is activated. We can check this by entering `lsmod | grep ipv6` in a terminal. When IPv6 support is not activated, this command returns with no output. To load the IPv6 kernel module we enter `sudo modprobe ipv6`, which should return with no output if the loading succeeded. Entering `lsmod | grep ipv6` again will present us with:
 
     ipv6                  316254  20
 
-indicating that the module is loaded. To load the module automatically at boot we enter `echo ipv6 | sudo tee -a /etc/modules`, which appends `ipv6` as last line to `/etc/modules`. The next time we boot, the `ipv6` module will be loaded automatically.
+indicating that the module is loaded. To load the module automatically at boot time we enter
+
+    :bash:
+    echo ipv6 | sudo tee -a /etc/modules
+
+which appends `ipv6` as last line to `/etc/modules`. The next time we boot, the `ipv6` module will be loaded automatically.
 
 # Operating the R-Idge USB router
 
-To provide connectivity to other IEEE 802.15.4 devices we use the [R-Idge](http://rosand-tech.com/products/r-idge/prod.html) 6LoWPAN USB router. After the USB stick is plugged in, it should create a new available network interface called `usb0`. We can check this entering `ifconfig usb0` which will provide us with information on 
+To provide connectivity to other IEEE 802.15.4 devices we use the [R-Idge](http://rosand-tech.com/products/r-idge/prod.html) 6LoWPAN USB router. After the USB stick is plugged in, it should create a new available network interface called `usb0`. We can check this entering `ifconfig usb0` which will provide us with information on the interface:
 
     usb0      Link encap:Ethernet  HWaddr 02:12:4b:e4:0a:83  
     inet6 addr: fe80::12:4bff:fee4:a83/64 Scope:Link
@@ -91,11 +94,9 @@ We will be presented with the following output:
 
 We can then compare the shown hardware address (at the far end of the shown line) with the `HWaddr` presented in the first line of the entered `ifconfig` command. If the addresses match everything is fine and we can move on to configure our R-Idge 6LoWPAN USB router.
 
-## Configure the R-Idge 6LoWPAN USB router
+## Configuring the R-Idge 6LoWPAN router
 
-To configure the router, we need to use the provided _Configuration program_ from [Rosand Technologies](http://rosand-tech.com/products/r-idge/doc.html). Unfortunately the provided binary/installation packages are not compiled for being used on the Raspbian, so we need to build them from source.
-
-For the build we need to install the tools required to build the source by entering 
+To configure the router, we need to use the provided _Configuration program_ from [Rosand Technologies](http://rosand-tech.com/products/r-idge/doc.html). Unfortunately the provided binary/installation packages are not compiled for being used on the Raspbian, so we need to build them from source. For the build we need to install the tools required to build the source by entering 
 
     sudo apt-get install bison flex wget
 
@@ -107,8 +108,9 @@ After `bison` and `flex` are installed we can proceed to build the configuration
         cd cfgtool-1.00 &&
         ./configure &&
         make
+{: .wide }
 
-When the build finished, we create a new directory for the compiled binary (`mkdir ../cfgtool-bin`), and copy the relevant files there by entering
+After the build finishes, we create a new directory for the compiled binary (`mkdir ../cfgtool-bin`), and copy the relevant files there by entering
 
     cp cfgtool ../cfgtool-bin/ &&
         cp cftool.conf ../cfgtool-bin/
@@ -132,8 +134,6 @@ This will present us with the following (or similar):
     prefix = 3
 
 The most interesting values here are the `channel` and the `panid`. These values must both be the same for all  communication participants, i.e. the R-Idge router and any node in the network. To change these values we set the according parameters to write (exchange `:r:` with `:w:` in the command above) and provide an appropriate value, e.g we set channel to 22 and the panid to 0x123:
-
-TODO: why these values.
 
     :bash:
     ./cfgtool -p ridge \
@@ -162,7 +162,10 @@ Reading the configuration again (as done above) reveals that the new values are 
     panid = 0x123
     prefix = 3
 
-With the `cfgtool` we have a tool at hand to set the desired parameters for the R-Idge USB router. Next, we need to prepare some nodes for the _Internet of Plants_.
+**Note:** These values are examples. You need to make sure that whatever you set in the configuration tool for the R-Idge router matches the parameters that you set in your RIOT application and/or other hardware which might want to communicate with the border router.
+{: .alert .alert-info }
 
-## Operate the nodes with RIOT [TODO]
-## Make them talk [TODO]
+
+# Next steps
+
+This concludes the basic setup of the R-Idge router on the Raspberry Pi. Now that we have both the {% postlink 2015-01-10-samr21-dev-setup-ubuntu SAM R21 %} and the Rasperry Pi set up, the next step is to establish communication between both devices, which will be the topic of an upcoming post. So stay tuned :)
