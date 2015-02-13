@@ -47,19 +47,24 @@ inc:
 authors:
   watrli:
     name: watr.li
-    twitter: watr_li
+    url: https://twitter.com/watr_li
     bio: Building the Internet of Plants
     image: logo-big.png
   lucas:
     name: Lucas Jenß
-    twitter: fresskoma
+    url: https://twitter.com/fresskoma
     bio: Likes disrupting things.
     image: authors/lucas.jpg
   lotte:
     name: Lotte Steenbrink
-    twitter: lotterleben
+    url: https://twitter.com/lotterleben
     bio: Because I can.
     image: authors/lotte.jpg
+  martin:
+    name: Martin Landsmann
+    url: https://github.com/BytesGalore
+    bio: For the plants.
+    image: authors/martin.png
 
 url:          "http://watr.li"
 source:      .
