@@ -48,3 +48,5 @@ All are idempotent (multiple calls will always yield the same result) except for
 
 All implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
 It is usually assumed that IoT devices are able to do relatively few things on their own. This is why most CoAP libraries for embedded systems, such as microcoap for Arduino or libcoap for contiki (TODO: verify!) only offer the ability to create a CoAP server which can answer requests, but not a client or server which can initiate requests on its own. but with Embedded OSes getting more sophisticated and energy-savy, this may change soon.
+
+- mention RIOT (libcoap/microcoap) and Californium briefly??
