@@ -19,6 +19,26 @@
 
 require 'gemoji'
 
+module Emoji
+  class Character
+    def image_filename
+      if defined? @image_filename
+        @image_filename
+      else
+        default_image_filename
+      end
+    end
+    private
+    def default_image_filename
+      if custom?
+        '%s.png' % name
+      else
+        'unicode/%s.png' % hex_inspect.sub(/-fe0f\b/, '').upcase
+      end
+    end
+  end
+end
+
 module Jekyll
 
   module EmojiFilter
