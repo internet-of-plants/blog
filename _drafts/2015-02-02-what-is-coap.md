@@ -21,15 +21,23 @@ We could have defined our own way of communicating this. We could have specified
 
 Luckily, there is a better way of doing this: the [Constrained Application Protocol (CoAP)](http://coap.technology). It operates on the Application Layer and was designed to be a lightweight complement to HTTP. Because of this coupling, CoAP requests can be translated to HTTP requests and a subset of HTTP requests can be translated to CoAP. This is great for nodes that act as border routers (like our *display node*) and translate between IoT environments and the “big” internet.
 
+## Endpoints and Resources
+Endpoints are the source and destination of each CoAP request, i.e. either a CoAP server or client. They are represented by an (IP, port) pair.  
+
+Every type of information a CoAP client or server has to offer is called a *resource*. These resources are identified by a Unique Resource Identifier (URI).  
+
+<!-- I pulled that IP out of my... nose, maybe go for a nicer one? -->
+So. suppose node A wanted to know about the humidity status of the plant node B is watching over. B has the IP ``fe80::42`` and runs a CoAP server which is listening at port ``1234``.  
+To retrieve the desired information, A may send a ``GET`` request to ``[fe80::42]:1234/plant/humidity``.
+
 ## How it works
 <!--picture of server & client?-->
 CoAP relies on request/response pairs, just like HTTP. 
+Whenever a 
+
 
 - stateless
 - 
-
-
-## Endpoints
 
 ## Basic request methods
 
