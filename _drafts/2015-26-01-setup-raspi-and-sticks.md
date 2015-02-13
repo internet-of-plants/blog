@@ -168,4 +168,4 @@ Reading the configuration again (as done above) reveals that the new values are 
 
 # Next steps
 
-This concludes the basic setup of the R-Idge router on the Raspberry Pi. Now that we have both the {% postlink 2015-01-10-samr21-dev-setup-ubuntu SAM R21 %} and the Rasperry Pi set up, the next step is to establish communication between both devices, which will be the topic of an upcoming post. So stay tuned :)
+This concludes the basic setup of the R-Idge router on the Raspberry Pi. Now that we have both the {% postlink 2015-01-10-samr21-dev-setup-ubuntu SAM R21 %} and the Rasperry Pi set up, the next step is to establish communication between both devices, which will be the topic of an upcoming post. So stay tuned :smile:
