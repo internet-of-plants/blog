@@ -21,7 +21,7 @@ layout: base
         </header>
 
         <section>
-            {{ content }}
+            {{ content | emojify }}
             {% include _social.html %}
         </section>
 
@@ -36,7 +36,7 @@ layout: base
                     {% else %}
                         Co-authored by
                     {% endif %}
-                    <strong><a rel="author" href="https://twitter.com/{{ author.twitter }}" title="{{ author.name }}" target="_blank">{{ author.name }}</a></strong><br>
+                    <strong><a rel="author" href="{{ author.url }}" title="{{ author.name }}" target="_blank">{{ author.name }}</a></strong><br>
                     <span class="muted">{{ author.bio }}</span>
                 </p>
             </address>

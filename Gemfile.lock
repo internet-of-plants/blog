@@ -17,6 +17,7 @@ GEM
     fastimage (1.6.6)
       addressable (~> 2.3, >= 2.3.5)
     ffi (1.9.6)
+    gemoji (2.1.0)
     hike (1.2.3)
     hitimes (1.2.2)
     jekyll (2.5.3)
@@ -97,6 +98,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  gemoji
   jekyll
   jekyll-assets
   maruku
