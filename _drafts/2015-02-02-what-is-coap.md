@@ -45,4 +45,8 @@ To retrieve the desired information, A may send a ``GET`` request to ``[fe80::42
 All implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
 It is usually assumed that IoT devices are able to do relatively few things on their own. This is why most CoAP libraries for embedded systems, such as microcoap for Arduino or libcoap for contiki (TODO: verify!) only offer the ability to create a CoAP server which can answer requests, but not a client or server which can initiate requests on its own. But with Embedded OSes getting more sophisticated and energy-savy, this may change soon.
 
-- mention RIOT (libcoap/microcoap) and Californium briefly??
+For watr.li, we chose to use Californium to handle all things CoAP on our Display nodes, because it integrates nicely with the [play framework](TODO) we're using to serve the plant status webpage and is easy to use and well-documented. <!--TODO: lucas can probably explain this better... -->
+
+On our plant nodes, we had the choice between [microcoap](TODO) and [libcoap](TODO), as RIOT features both as an [external package](TODO: link to RIOT/pkg). libcoap is a more monolithic effort which not only sets the CoAP headers and payload in place, but also takes care of dispatching them. microcoap, on the other hand, gives the user a blob of data which they can then dispatch however they see fit. This decreases complexity and removes the need for additional socket-handling threads. This is why we chose to use microcoap on our plant nodes. 
+
+
