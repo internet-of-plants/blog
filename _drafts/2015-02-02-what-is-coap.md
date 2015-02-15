@@ -24,29 +24,25 @@ Luckily, there is a better way of doing this: the [Constrained Application Proto
 ## Endpoints and Resources
 Endpoints are the source and destination of each CoAP request, i.e. either a CoAP server or client. They are represented by an (IP, port) pair.  
 
-Every type of information a CoAP client or server has to offer is called a *resource*. These resources are identified by a Unique Resource Identifier (URI).  
-
-<!-- I pulled that IP out of my... nose, maybe go for a nicer one? -->
-So. suppose node A wanted to know about the humidity status of the plant node B is watching over. B has the IP ``fe80::42`` and runs a CoAP server which is listening at port ``1234``.  
-To retrieve the desired information, A may send a ``GET`` request to ``[fe80::42]:1234/plant/humidity``.
-
-## How it works
-<!--picture of server & client?-->
-CoAP relies on request/response pairs, just like HTTP. 
-Whenever a 
-
-
-- stateless
-- 
+Every type of information a CoAP client or server has to offer is called a *resource*. These resources are identified by a Unique Resource Identifier (URI), which is oftentimes similar to a file system path, like so: ``ths/is/my/URI``
 
 ## Basic request methods
 
 CoAP supports ``PUT``, ``POST``, ``GET`` and ``DELETE`` as defined in HTTP:
 All are idempotent (multiple calls will always yield the same result) except for ``POST``, and ``GET`` is safe (GETs will never change state on the server).
 
+## Example
+
+Let's say we have a CoAP client A and a CoAP server B.
+<!-- I pulled that IP out of my... nose, maybe go for a nicer one? -->
+Suppose node A wanted to know about the humidity status of the plant node B is watching over. B has the IP ``fe80::42`` and runs a CoAP server which is listening at port ``1234``.  
+To retrieve the desired information, A may send a ``GET`` request to ``[fe80::42]:1234/plant/humidity``. B then answers with a ``2.05 (Content)`` response, which is similar to HTTP's ``200 OK`` and holds the requested value in its payload.
+
+<!-- add picture -->
+
 ## Implementations
 
 All implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
-It is usually assumed that IoT devices are able to do relatively few things on their own. This is why most CoAP libraries for embedded systems, such as microcoap for Arduino or libcoap for contiki (TODO: verify!) only offer the ability to create a CoAP server which can answer requests, but not a client or server which can initiate requests on its own. but with Embedded OSes getting more sophisticated and energy-savy, this may change soon.
+It is usually assumed that IoT devices are able to do relatively few things on their own. This is why most CoAP libraries for embedded systems, such as microcoap for Arduino or libcoap for contiki (TODO: verify!) only offer the ability to create a CoAP server which can answer requests, but not a client or server which can initiate requests on its own. But with Embedded OSes getting more sophisticated and energy-savy, this may change soon.
 
 - mention RIOT (libcoap/microcoap) and Californium briefly??
