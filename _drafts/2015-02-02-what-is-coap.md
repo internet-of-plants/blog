@@ -117,7 +117,7 @@ Some implementations of the CoAP protocol can be found at [http://coap.technolog
 
 For watr.li, we chose to use Californium to handle all things CoAP on our Display nodes, since it provides a nicely architected high-level abstraction over the CoAP protocol, which is exactly what we desired for our relatively powerful display node running a Raspberry Pi (in comparison to the SAM R21 based plant nodes). Since Californium runs inside of the JVM it also integrates nicely with the [Play framework][play-framework] which we chose to implement our web interface.
 
-On our plant nodes, we had the choice between [microcoap](TODO) and [libcoap](TODO), as RIOT features both as an [external package](TODO: link to RIOT/pkg). libcoap is a more monolithic effort which not only sets the CoAP headers and payload in place, but also takes care of dispatching them. microcoap, on the other hand, gives the user a blob of data which they can then dispatch however they see fit. This decreases complexity and removes the need for additional socket-handling threads. This is why we chose to use microcoap on our plant nodes. 
+On our plant nodes, we had the choice between [microcoap](https://github.com/1248/microcoap) and [libcoap](http://libcoap.sourceforge.net), as RIOT features both as an [external package](https://github.com/RIOT-OS/RIOT/tree/master/pkg). libcoap is a more monolithic effort which not only sets the CoAP headers and payload in place, but also takes care of dispatching them. microcoap, on the other hand, gives the user a blob of data which they can then dispatch however they see fit. This decreases complexity and removes the need for additional socket-handling threads. This is why we chose to use microcoap on our plant nodes. 
 
 
 
