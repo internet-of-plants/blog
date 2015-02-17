@@ -207,9 +207,11 @@ article {
         }
     }
 
-    .highlight.wide pre {
+    .highlight.wide pre,
+    table.wide {
         width: 125%;
         margin-left: -12.5%;
+        max-width: 125%;
     }
 
     code {
