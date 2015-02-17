@@ -98,7 +98,7 @@ When interacting with a CoAP resource, one of four "request methods" must be spe
 
 # Example
 
-Let's say we have a CoAP client C and a CoAP server S.Suppose node C wanted to know about the humidity status of the plant node S is watching over. S has the IP `fe80::42` and runs a CoAP server which is listening on port `1234`.  
+Let's say we have a CoAP client C and a CoAP server S. Suppose node C wanted to know about the humidity status of the plant node S is watching over. S has the IP `fe80::42` and runs a CoAP server which is listening on port `1234`.  
 
 To retrieve the desired information, C may send the following request (request parameters are specified in `Parameter: Value`):
 
@@ -113,9 +113,7 @@ S then answers with a `2.05 Content` response, which is similar to HTTP's `200 O
 
 # Implementations
 
-Relevant implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
-
-It is usually assumed that IoT devices are able to do relatively few things on their own. This is why most CoAP libraries for embedded systems, such as microcoap for Arduino or libcoap for contiki (TODO: verify! Lucas: could not verify because sourceforge down ... aber waere n client nicht egtl sinnvoller fuern embedded device als n server?! o.o) only offer the ability to create a CoAP server which can answer requests, but not a client or server which can initiate requests on its own. But with Embedded OSes getting more sophisticated and energy-savy, this may change soon.
+Some implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
 
 For watr.li, we chose to use Californium to handle all things CoAP on our Display nodes, since it provides a nicely architected high-level abstraction over the CoAP protocol, which is exactly what we desired for our relatively powerful display node running a Raspberry Pi (in comparison to the SAM R21 based plant nodes). Since Californium runs inside of the JVM it also integrates nicely with the [Play framework][play-framework] which we chose to implement our web interface.
 
