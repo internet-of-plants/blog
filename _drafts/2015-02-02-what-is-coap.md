@@ -19,7 +19,6 @@ We could have defined our own way of communicating this. We could have specified
 Luckily, there is a better way of doing this: the [Constrained Application Protocol (CoAP)](http://coap.technology). It operates on the Application Layer and was designed to be a lightweight complement to HTTP. Because of this coupling, CoAP requests can be translated to HTTP requests and a subset of HTTP requests can be translated to CoAP. This is great for nodes that act as border routers (like our *display node*) and translate between IoT environments and the “big” internet.
 
 
-TODO: mention that its udp based
 
 # Endpoints and Resources
 
