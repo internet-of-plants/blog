@@ -41,55 +41,55 @@ Each endpoint is uniquely identified by a the triplet `(IP, Port, Transport Laye
 
 When interacting with a CoAP resource, one of four "request methods" must be specified. The request method identifies the intent with which a resource is being accessed and each method has some inherent properties:
 
-**Note:** Idempotence in the context of CoAP means that you can invoke a request multiple times with the same effect. A "safe" request is one that does not change any state on the server.
+**Note:** A CoAP request is idempotent if you can invoke a request multiple times with the same effect. A request is safe if it does not change any state on the server.
 {: .alert .alert-info }
-
-* **GET** is used to retrieve the current state of a resource identified by the accessed URI. The GET method must be safe and idempotent. GET requests cannot have an attached payload.
-
-* **POST** is a generic indicator for the recipient that the enclosed message should be processed, usually resulting in the creation of a new resource or the update of the target resource.
-
-* **PUT** is used to indicate that the target resource should be created or updated.
-
-* **DELETE** requests that the target resource should be deleted.
 
 <table class="table table-condensed wide">
     <thead>
         <tr>
             <th>Method</th>
-            <th>Safe?</th>
-            <th>Idempotent?</th>
-            <th>Payload?</th>
-            <th>Response Codes</th>
+            <th>Semantics</th>
+            <th>Safe</th>
+            <th>Idempotent</th>
+            <th>Payload</th>
+            <th>Return&nbsp;Codes</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>GET</td>
+            <td><small>Retrieve the current state of a resource identified by the accessed URI.</small></td>
             <td class="text-center">✓</td>
             <td class="text-center">✓</td>
             <td class="text-center">𝗫</td>
-            <td><small>2.05 Content, 2.03 Valid</small></td>
+            <td><small>2.03&nbsp;Valid, 2.05&nbsp;Content</small></td>
         </tr>
         <tr>
             <td>POST</td>
+            <td><small>A generic indicator for the recipient that the enclosed message should be pro&shy;cessed, usually resulting in the creation of a new re&shy;source or the update of the target resource.</small></td>
             <td class="text-center">𝗫</td>
             <td class="text-center">𝗫</td>
             <td class="text-center">✓</td>
-            <td><small>2.01 Created, 2.04 Changed, 2.02 Deleted</small></td>
+            <td><small>2.01&nbsp;Created, 2.02&nbsp;Deleted, 2.04&nbsp;Changed</small></td>
+            
         </tr>
         <tr>
             <td>PUT</td>
+            <td><small>Indicates that the target resource should be created or updated.</small></td>
             <td class="text-center">𝗫</td>
             <td class="text-center">𝗫</td>
             <td class="text-center">✓</td>
-            <td><small>2.01 Created, 2.04 Changed</small></td>
+            <td><small>2.01&nbsp;Created, 2.04&nbsp;Changed</small></td>
         </tr>
         <tr>
             <td>DELETE</td>
+            <td><small>Requests that the target resource should be deleted.</small></td>
+
             <td class="text-center">𝗫</td>
             <td class="text-center">✓</td>
             <td class="text-center">𝗫</td>
-            <td><small>2.02 Deleted</small></td>
+            <td><small>2.02&nbsp;Deleted</small></td>
+            
         </tr>
     </tbody>
 </table>
