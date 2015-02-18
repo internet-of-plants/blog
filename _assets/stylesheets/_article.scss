@@ -76,6 +76,9 @@ article {
         color:$text;
         font-weight:400;
         margin:0 0 1.5em;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
     }
 
 
