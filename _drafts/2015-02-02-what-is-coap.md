@@ -119,7 +119,7 @@ For watr.li, we chose to use Californium to handle all things CoAP on our Displa
 
 On our plant nodes, we had the choice between [microcoap](https://github.com/1248/microcoap) and [libcoap](http://libcoap.sourceforge.net), as RIOT features both as an [external package](https://github.com/RIOT-OS/RIOT/tree/master/pkg). libcoap is a more monolithic effort which not only sets the CoAP headers and payload in place, but also takes care of dispatching them. microcoap, on the other hand, gives the user a blob of data which they can then dispatch however they see fit. This decreases complexity and removes the need for additional socket-handling threads. This is why we chose to use microcoap on our plant nodes. 
 
-
+In our next series of posts, we will explain how to create, send and answer CoAP requests with both microcoap and Californium, so keep an eye out for updates!
 
 [rfc-12-3]: https://tools.ietf.org/html/rfc7252#section-12.3
 [play-framework]: https://www.playframework.com/
