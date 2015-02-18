@@ -10,7 +10,7 @@ authors:
     - lotte
     - lucas
 
-date: 2015-01-23
+date: 2015-02-18
 ---
 
 In order to transfer data in the Internet of Plants, nodes need to know the type of interaction and its exact target: Did my neighbor just ask me for a specific information, or did they send unsolicited information? If so, which resource is this query or information about? Etc etc.
