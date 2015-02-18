@@ -29,9 +29,14 @@ All entities participating in the CoAP protocol are called "endpoints". For our 
 **Note:** Other participants include intermediaries such as proxies which are not discussed here.
 {: .alert .alert-info }
 
-Each endpoint is uniquely identified by a the triplet `(IP, Port, Transport Layer Security)`, the latter two being optional. Every type of information a CoAP endpoint has to offer is called a *resource*. These resources are identified by a Unique Resource Identifier (URI), which resembles (but is completely unrelated to) a filesystem path. With endpoint information included, a CoAP URI might look something like this:
+Each endpoint is uniquely identified by a the triplet `(IP, Port, Transport Layer Security)`, the latter two being optional, defaulting to `5683` and `None` respectively. Every type of information a CoAP endpoint has to offer is called a *resource*. These resources are identified by a Unique Resource Identifier (URI), which resembles (but is completely unrelated to) a filesystem path. With endpoint information included, a CoAP URI might look something like this:
 
-    coap://[fe80::c2ff:febc:139c]:1234/example/resource
+    coap://[fe80::c2ff:febc:139c]:1234/foo/bar
+
+The IPv6 address and port identify the endpoint that provides the `foo` resource. `bar` is a sub-resource of `foo`.
+
+**Note:** Literal IPv6 address in a URI have to be enclosed in `[...]` according to [RFC 2732](https://tools.ietf.org/html/rfc2732).
+{: .alert .alert-info }
 
 # Request methods
 
@@ -96,7 +101,7 @@ When interacting with a CoAP resource, one of four "request methods" must be spe
 
 Let's say we have a CoAP client C and a CoAP server S. Suppose node C wanted to know about the humidity status of the plant node S is watching over. S has the IP `fe80::42` and runs a CoAP server which is listening on port `1234`.  
 
-To retrieve the desired information, C may send the following request (request parameters are specified in `Parameter: Value`):
+To retrieve the desired information, C may send the following request (request parameters are specified in `Parameter: Value` format in this example):
 
     GET coap://[fe80::42]:1234/plant/humidity
     Accept: 0
