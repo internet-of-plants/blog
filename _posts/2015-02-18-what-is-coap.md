@@ -20,6 +20,7 @@ We could have defined our own way of communicating this information. We could ha
 
 Luckily, there is a better way of doing this: the [Constrained Application Protocol (CoAP)](http://coap.technology). It operates on the Application Layer and was designed to be a lightweight complement to HTTP. Because of this coupling, CoAP requests can be translated to HTTP requests and a subset of HTTP requests can be translated to CoAP. This is great for nodes that act as border routers (like our *display node*) and translate between IoT environments and the “big” internet.
 
+<!-- more -->
 
 
 # Endpoints and Resources
@@ -114,9 +115,7 @@ S then answers with a `2.05 Content` response, which is similar to HTTP's `200 O
 
 # Implementations
 
-Some implementations of the CoAP protocol can be found at [http://coap.technology/impls.html](http://coap.technology/impls.html).
-
-For watr.li, we chose to use Californium to handle all things CoAP on our Display nodes, since it provides a nicely architected high-level abstraction over the CoAP protocol, which is exactly what we desired for our relatively powerful display node running a Raspberry Pi (in comparison to the SAM R21 based plant nodes). Since Californium runs inside of the JVM it also integrates nicely with the [Play framework][play-framework] which we chose to implement our web interface.
+Some implementations of the CoAP protocol can be found at  [coap.technology](http://coap.technology/impls.html). For watr.li, we chose to use Californium to handle all things CoAP on our Display nodes, since it provides a nicely architected high-level abstraction over the CoAP protocol, which is exactly what we desired for our relatively powerful display node running a Raspberry Pi (in comparison to the SAM R21 based plant nodes). Since Californium runs inside of the JVM it also integrates nicely with the [Play framework][play-framework] which we chose to implement our web interface.
 
 On our plant nodes, we had the choice between [microcoap](https://github.com/1248/microcoap) and [libcoap](http://libcoap.sourceforge.net), as RIOT features both as an [external package](https://github.com/RIOT-OS/RIOT/tree/master/pkg). libcoap is a more monolithic effort which not only sets the CoAP headers and payload in place, but also takes care of dispatching them. microcoap, on the other hand, gives the user a blob of data which they can then dispatch however they see fit. This decreases complexity and removes the need for additional socket-handling threads. This is why we chose to use microcoap on our plant nodes. 
 
