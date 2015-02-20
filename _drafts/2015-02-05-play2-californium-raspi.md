@@ -4,14 +4,14 @@ title: Raspi/Californium/Play2
 author: lucas
 ---
 
-On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime" (whatever that even means for websites). In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the piece fit and can be made to work together. 
+On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime" (in double-quotes because, well, we're talking about websites). In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the piece fit and can be made to work together. 
 
 
 <!-- more -->
 
 ![](images/play2-californium/architecture.png)
 
-The graphic shows an abstract overview of our setup. On the bottom left we have one of our plant nodes which communicates with the [Eclipse Californium](https://www.eclipse.org/californium/) Server (TODO why cf?) via the CoAP protocol. To develop the web interface we have chosen the [Play framework](https://playframework.com/) (TODO why?). The communication between the Californium Server and the web application is established through an [Akka](http://akka.io/) Actor, which is the conventional solution for asynchronous communication within Play. Lastly, the user's browser communicates with the Play application server using HTTP as well as the WebSocket protocol for "realtime" updates. Communication between actors is highlighted in red. No protocol is mentioned because no serialization of the messages is necessary, since the subsystems operate inside the same Java Virtual Machine, thus making it possible to simply pass Java objects around.
+The graphic shows an abstract overview of our setup. On the bottom left we have one of our plant nodes which communicates with the [Eclipse Californium](https://www.eclipse.org/californium/) Server via the CoAP protocol, both of which have been introduced {% postlink 2015-02-18-what-is-coap here %}. To develop the web interface we have chosen the [Play framework](https://playframework.com/) because it runs inside the JVM and thus integrates well with Californium. The communication between the Californium Server and the web application is established through an [Akka](http://akka.io/) Actor, which is the conventional solution for asynchronous communication within Play. Lastly, the user's browser communicates with the Play application server using HTTP as well as the WebSocket protocol for "realtime" updates. Communication between actors is highlighted in red. No protocol is mentioned because no serialization of the messages is necessary, since the subsystems operate inside the same Java Virtual Machine, thus making it possible to simply pass Java objects around.
 
 
 
@@ -27,7 +27,7 @@ To create a new Play application based on the Java template, run the following i
 
     activator new play-californium play-java
 
-This will create a new directory `play-californium` in the current directory, to which we can switch an execute `./activator run`. This will start a webserver at port 9000, so navigating to `http://localhost:9000` should display the Play welcome message. 
+This will create a new directory `play-californium` in the current directory, to which we can switch and execute `./activator run`. This will start a webserver at port 9000, so navigating to `http://localhost:9000` should display the Play welcome message. 
 
 **Note:** Play automatically detects changes in the project directory after each request to the webserver, so it is not necessary to restart it after source code changes.
 {: .alert .alert-info }
@@ -193,7 +193,7 @@ Then comes the constructor which registers our example CoAP resource and stores 
 
 Lastly we define said resource as an inner class of the `CaliforniumServer`. The constructor of the `CoapResource` takes the resource name as a parameter, which in this case is `helloWorld`.
 
-In order to send messages to the resource we still need to define a handler for one of the CoAP methods (GET, POST, PUT and DELETE). We don't use GET (as the Californium HelloWorld example does) because it cannot have a payload.
+In order to send messages to the resource we still need to define a handler for one of the CoAP methods (GET, POST, PUT and DELETE). We don't use GET (as the Californium HelloWorld example does) because {% postlink 2015-02-18-what-is-coap it cannot have a payload %}.
 
     :java:
     class HelloWorldResource extends CoapResource {
