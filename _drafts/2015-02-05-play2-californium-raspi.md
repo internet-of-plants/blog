@@ -215,52 +215,44 @@ In the `handlePUT` method we notify the server actor that a message has been rec
 
 
 
+# Testing locally
+
+Now let's test what we've built. In the Play project's root directory, launch `./activator run` (if it isn't still running) and navigate to `http://localhost:9000`. This will initialize the Californium server and the actors, thus allowing us to receive CoAP messages.
+
+To test that functionality we'll be using [Eclipse Copper][eclipse-copper], a Firefox plugin that adds `coap://` URI support. After installing Copper and the server, we should be able to navigate to `coap://localhost:5683/` and see the following screen:
+
+<img src="images/play2-californium/copper-screenshot.png">
+
+We can see that Copper used the CoAP resouce discovery mechanism to list all the available resources that our server provides, which is just `helloWorld`. We can can proceed by clicking on that resource, entering something in the "Outgoing" textfield in the center of the screen and then click on the PUT icon at the top (we use the PUT method because that is how we have defined our resource handler). The expected result is that whatever you've entered into the "Outgoing" field now pops up in the console where you've started the Play application:
+
+    [INFO] [02/20/2015 17:12:08] [...] Received CoAP message: 'Success!'
+{: .wide .lol }
 
 
 
+# Deploying the application to the Raspberry Pi
 
+The last step we'll have to take is to get our application deployed to Raspberry. This is relatively simple if you've set it up according to our previous post, "{% postlink 2015-02-13-setting-up-a-border-router %}", because Java comes pre-installed on recent releases of Raspbian. 
 
+To prepare our deployment we run `./activator stage`. This will bundle the application inside the `target/universal/stage` directory relative to the project's root. All we have to do then is rsync said directory to the Raspberry and run the application by changing into the `stage` directory on the Raspberry and running:
 
-
-
-# Misc 
-
-* The raspberry serves both as coap client/server as well as webserver for the watr-li management dashboard (manages nodes)
-* Dashboard (play app) is started, which then starts the coap client/server
-* background job is an actor started in the play's object Global 
-* deploying application to the raspi: `./activator stage` then rsync to raspi and start with low memory settings
-* sqlite because easy and low memory footprint
-
-TODO: connect the stuff to usb0
-TODO: how to test web-interface locally
-
-In build.sbt before building add (if openjdk7 is used and you have Java 8):
-
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
-
-First
-
-    ./activator stage # on the build system
-
-Then rsync `target/universe/stage` to raspi. Then run
-
-    JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" ../bin/iop-dashboard
-
-Woohooo!
-
-
-
-
-
-
-
-
-
-
-
-# Deploying (to the Raspi)
-
-Mention 
-
-    javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+    :bash:
+    JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" \
+        ./bin/play-californium
 {: .wide }
+
+**Note:** If you're deploying to a device that has e.g. Java 7 installed, but you built the application with Java 8, running it on the target will fail. To circumvent this, add the following to your `build.sbt` if necessary: `javacOptions ++= Seq("-source", "1.7", "-target", "1.7")`. This sets the Java compiler's target version to Java 7.
+{: .alert .alert-warning }
+
+This starts the Play application, which might take quite a while to spin up since the Raspberry isn't the fastest of devices. The `JAVA_OPTS` that we're passing limits the amount of memory the JVM uses. If Play has started successfully, it will display the following messags:
+
+    [info] play - Listening for HTTP on /0.0.0.0:9000
+
+After that you should be able to test the Californium Server inside Play just as you've done locally, by entering the IP of your Raspberry into Firefox with the `coap://` protocol prefix.
+
+An upcoming post will explain how to forward the CoAP messages to the user's browser through WebSockets and how to process CoAP messages and update a web interface in "realtime" based on the received data.
+
+
+
+
+[eclipse-copper]: https://addons.mozilla.org/en-US/firefox/addon/copper-270430/
