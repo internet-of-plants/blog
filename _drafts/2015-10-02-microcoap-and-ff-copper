@@ -10,7 +10,10 @@ date: 2015-02-10
 In [one of our last posts](http://watr.li/what-is-coap.html), we explained that the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
 To do this, we need both of our node types– plant nodes and display nodes– to be able to send, process and answer CoAP requests.
 
-This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. (Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on linux or your Arduino.) <!--Footote this?-->
+This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. 
+
+Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on linux or your Arduino.{: .alert .alert-info }
+
 We'll also show you how to test your microcoap server with (Copper)[https://addons.mozilla.org/de/firefox/addon/copper-270430/], using [marz](TODO) to tunnel the requests to your RIOT instance.
 
 ## Implementing a simple microcoap server
