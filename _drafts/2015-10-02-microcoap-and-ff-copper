@@ -34,5 +34,10 @@ Now that our microcoap server is up and running, we'll want to feed it requests 
 If you already have a CoAP client which you can use to send requests, that's great. In case you don't, (Copper)[https://addons.mozilla.org/de/firefox/addon/copper-270430/] is here to help: Simply install the plugin in your Firefox browser and TODO.
 
 ### marz: feeding RIOT traffic from the outside
+Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
+<!-- TODO: what about 6lowpan? -->
+
+Because instances of RIOT's native port are just Linux threads, they lack a real, physical network. Native emulates this missing network through the use of tapbridges. This means that every RIOT native thread is attached to a tap device, which it assumes to be the network device through which all network traffic is sent and received. In order to get the CoAP requests we're sending with Copper through to our RIOT instance, we'll have to tunnel them into RIOT's emulated tap network. The following section will show you how to use [marz](https://github.com/sgso/marz) to accomplish this.
+
 
 TODO
