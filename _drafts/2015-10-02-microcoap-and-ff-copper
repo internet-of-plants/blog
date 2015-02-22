@@ -1,34 +1,33 @@
 ---
 layout: post
-title: Testing CoAP on RIOT with Copper
+title: CoAP on RIOT
+subtitle: implementing and testing with microcoap and copper
 categories: CoAP
 author: Lotte
 date: 2015-02-10
 ---
 
-The [Constrained Application Protocol](TODO: link to explanation article) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
+In [one of our last posts](http://watr.li/what-is-coap.html), we explained that the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
+To do this, we need both of our node types– plant nodes and display nodes– to be able to send, process and answer CoAP requests.
 
-<motivation: why this setup?>
-- interop tests
-- only server @ nodes
+This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. (Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on linux or your Arduino.) <!--Footote this?-->
+We'll also show you how to test your microcoap server with (Copper)[https://addons.mozilla.org/de/firefox/addon/copper-270430/], using [marz](TODO) to tunnel the requests to your RIOT instance.
 
-<ff copper plugin> -> link to lucas' into?
+## Implementing a simple microcoap server
+This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](TODO add link as soon as it's in master). 
 
+Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.
 
-## marz: feeding RIOT traffic from the outside
-<marz motivation & intro>
-- traffic needs to be tunneled “into” RIOT nativenet & back
-
-RIOT features a so-called “native port” which lets you run your RIOT binary inside a normal Linux thread. To enable it, you simply have to set ``BOARD ?= native`` in the makefile.
-This is awesome because it lets you debug things easily without having to flash your nodes all the time, and because you can test your wireless functionality in a safe environment, eliminating possible Layer 0 sources of errors. Networking with the RIOT native port is done through tun/tap devices and bridges.
-Now, if we want to use Copper to debug our RIOT CoAP app interactively, we need to tunnel the traffic into a tap device which is connected to our RIOT instance. 
 
 TODO
 
 
-## setup howto
-The following section will walk you through the setup of a CoAP envornment consisting of a RIOT application which can talk to the Copper plugin through a marz tunnel.
+## Testing your microcoap server
+Now that our microcoap server is up and running, we'll want to feed it requests and see if it behaves as expected. This section will guide you through the setup of a simple environment which lets you do this. (Despite the somewhat misleading terminology, this section is *not* about thorough, automated tests.)
 
-<marz setup & installation.. how do I account for a RIOT installation here?>
+### Setting up a test client
+If you already have a CoAP client which you can use to send requests, that's great. In case you don't, (Copper)[https://addons.mozilla.org/de/firefox/addon/copper-270430/] is here to help: Simply install the plugin in your Firefox browser and TODO.
 
+### marz: feeding RIOT traffic from the outside
 
+TODO
