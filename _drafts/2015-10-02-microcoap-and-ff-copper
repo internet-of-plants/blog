@@ -33,6 +33,7 @@ You will have to create a ``const coap_endpoint_t endpoints[]`` and fill it to m
 
 In ``endpoints.c``, you will find that the example application has created an array of ``coap_endpoint_t`` called ``endpoints``:
 
+	:c:
 	const coap_endpoint_t endpoints[] =
 	{
     	{COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
@@ -41,6 +42,7 @@ In ``endpoints.c``, you will find that the example application has created an ar
 
 Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.com/1248/microcoap/blob/master/coap.h#L138), we can see that a ``coap_endpoint_t`` is defined as follows (comments added by me):
 
+    :c:
     typedef struct
     {
         coap_method_t method;               /* (i.e. POST, PUT or GET) */
@@ -69,11 +71,30 @@ microcoap supports a maximum segment number of two out f the box. If you need mo
 - ``"ct=0"`` Specifies the Content-Format, which is a hint on how to interpret the payload of the packet (if any). In this case, the content format is 0, which stands for ``text/plain``
  A list of possible Content-Format types can be found in [section 12.3 of the CoAP RFC](https://tools.ietf.org/html/rfc7252#section-12.3).
 
-If our CoAP server receives a request which matches this definition, i.e. a ``GET`` request to ``/foo/bar/`` with the Content-Format set to ``0=text/plain``, the ``handle_get_response()`` function will be called, which handles the processing of this request and the creation of a response, if necessary.
+If our CoAP server receives a request which matches this definition, i.e. a ``GET`` request to ``/foo/bar/`` with the Content-Format set to ``0=text/plain``, the ``handle_get_response()`` function will be called, which handles the processing of this request and the creation of a response, if necessary. Let's look at this function in detail:
 
-TODO: explain how it does this
+	:c:
+	void create_response_payload(const uint8_t *buffer)
+    {
+        char *response = "1337";
+        memcpy((void*)buffer, response, strlen(response));
+    }
 
+    /* The handler which handles the path /foo/bar */
+    static int handle_get_response(coap_rw_buffer_t *scratch, const coap_packet_t *inpkt, coap_packet_t *outpkt, uint8_t id_hi, uint8_t id_lo)
+    {
+        DEBUG("[endpoints]  %s()\n",  __func__);
+        create_response_payload(response);
+        /* NOTE: COAP_RSPCODE_CONTENT only works in a packet answering a GET. */
+        return coap_make_response(scratch, outpkt, response, strlen((char*)response),
+                                  id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT, COAP_CONTENTTYPE_TEXT_PLAIN);
+    }
 
+Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with a fw parameters.
+
+TODO explain
+
+As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
 Note that microcoap will recognize the endpoints array by its name. This will **not** work if your array is called anything but ``endpoints``!{: .alert .alert-warning }
 
