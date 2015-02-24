@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Raspi/Californium/Play2
+title: Integrating Californium with the Raspberry Pi
 author: lucas
 ---
 
