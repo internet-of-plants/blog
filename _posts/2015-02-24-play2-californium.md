@@ -1,17 +1,21 @@
 ---
 layout: post
-title: Raspi/Californium/Play2
+title: Californium meets the Play Framework
+subtitle: And they have Raspberries for dinner!
 author: lucas
+date: 2015-02-24
 ---
 
-On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime" (in double-quotes because, well, we're talking about websites). In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the piece fit and can be made to work together. 
+On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime". In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the pieces fit and can be made to work together.
 
 
 <!-- more -->
 
 ![](images/play2-californium/architecture.png)
 
-The graphic shows an abstract overview of our setup. On the bottom left we have one of our plant nodes which communicates with the [Eclipse Californium](https://www.eclipse.org/californium/) Server via the CoAP protocol, both of which have been introduced {% postlink 2015-02-18-what-is-coap here %}. To develop the web interface we have chosen the [Play framework](https://playframework.com/) because it runs inside the JVM and thus integrates well with Californium. The communication between the Californium Server and the web application is established through an [Akka](http://akka.io/) Actor, which is the conventional solution for asynchronous communication within Play. Lastly, the user's browser communicates with the Play application server using HTTP as well as the WebSocket protocol for "realtime" updates. Communication between actors is highlighted in red. No protocol is mentioned because no serialization of the messages is necessary, since the subsystems operate inside the same Java Virtual Machine, thus making it possible to simply pass Java objects around.
+The graphic shows an abstract overview of our setup. On the bottom left we have one of our plant nodes which communicates with the [Eclipse Californium](https://www.eclipse.org/californium/) Server via the CoAP protocol, both of which have been introduced {% postlink 2015-02-18-what-is-coap here %}.
+
+To develop the web interface we have chosen the [Play framework](https://playframework.com/) because it runs inside the JVM and thus integrates well with Californium. The communication between the Californium Server and the web application is established through an [Akka](http://akka.io/) Actor, which is the conventional solution for asynchronous communication within Play. Lastly, the user's browser communicates with the Play application server using HTTP as well as the WebSocket protocol for "realtime" updates. Communication between actors is highlighted in red. No protocol is mentioned because no serialization of the messages is necessary, since the subsystems operate inside the same Java Virtual Machine, thus making it possible to simply pass Java objects around.
 
 
 
