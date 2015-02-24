@@ -14,7 +14,7 @@ This post explains how to implement a simple CoAP server on our *plant nodes*, w
 
 Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on linux or your Arduino.{: .alert .alert-info }
 
-We'll also show you how to test your microcoap server with (Copper)[https://addons.mozilla.org/de/firefox/addon/copper-270430/], using [marz](TODO) to tunnel the requests to your RIOT instance.
+We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
 ## Implementing a simple microcoap server
 This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](TODO add link as soon as it's in master). 
@@ -25,7 +25,7 @@ Please note that microcoap currently doesn't have a nice API to create requests 
 For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
 
 ### endpoints.c
-As explained in our [previous post](TODO), a microcoap server answers requests which are directed at the *resource* of a certain e*ndpoint* (namely, the port and IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
+As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a microcoap server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
 
 Probably a bit confusingly named, microcoap handles this with the help of an array called ``endpoints``.
 This array should *not* contain information about any endpoints (i.e. IP and port pairs), but information about your resources.  
