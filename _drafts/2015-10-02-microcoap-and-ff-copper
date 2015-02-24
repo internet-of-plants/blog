@@ -21,9 +21,61 @@ This section will walk you through the implementation of a very simple microcoap
 
 Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
 
+### main.c
+For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
 
-TODO
+### endpoints.c
+As explained in our [previous post](TODO), a microcoap server answers requests which are directed at the *resource* of a certain e*ndpoint* (namely, the port and IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
 
+Probably a bit confusingly named, microcoap handles this with the help of an array called ``endpoints``.
+This array should *not* contain information about any endpoints (i.e. IP, port pairs), but information about your resources.  
+You will have to create a ``const coap_endpoint_t endpoints[]`` and fill it to match your desired endpoints and how they should be handled. Let's look at this step by step.
+
+In ``endpoints.c``, you will find that the example application has created an array of ``coap_endpoint_t`` called ``endpoints``:
+
+	const coap_endpoint_t endpoints[] =
+	{
+    	{COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
+    	{(coap_method_t)0, NULL, NULL, NULL} /* marks the end of the endpoints array */
+	};
+
+Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.com/1248/microcoap/blob/master/coap.h#L138), we can see that a ``coap_endpoint_t`` is defined as follows (comments added by me):
+
+    typedef struct
+    {
+        coap_method_t method;               /* (i.e. POST, PUT or GET) */
+        coap_endpoint_func handler;         /* callback function which handles this 
+                                             * type of endpoint (and calls 
+                                             * coap_make_response() at some point) */
+        const coap_endpoint_path_t *path;   /* path towards a resource (i.e. foo/bar/) */ 
+        const char *core_attr;              /* the 'ct' attribute, as defined in RFC7252, section 7.2.1.:
+                                             * "The Content-Format code "ct" attribute 
+                                             * provides a hint about the 
+                                             * Content-Formats this resource returns." 
+                                             * (Section 12.3. lists possible ct values.) */
+    } coap_endpoint_t;
+
+This helps us understand the first entry of our ``endpoints[]``.  
+
+- ``COAP_METHOD_GET`` specifies that this entry describes how to handle a ``GET`` request.
+- ``handle_get_response`` is the function which should be called in case a suitable request has been received.
+- ``&path`` is a pointer towards the path that specifies the resource which is handled by this entry. ``path`` is defined as  
+		
+		static const coap_endpoint_path_t path = {2, {"foo", "bar"}};
+a few lines up, so we know that this entry handles a path which contains two segments, namely ``/foo/bar``.
+
+microcoap supports a maximum segment number of two out f the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.{: .alert .alert-warning }
+
+- ``"ct=0"`` Specifies the Content-Format, which is a hint on how to interpret the payload of the packet (if any). In this case, the content format is 0, which stands for ``text/plain``
+ A list of possible Content-Format types can be found in [section 12.3 of the CoAP RFC](https://tools.ietf.org/html/rfc7252#section-12.3).
+
+If our CoAP server receives a request which matches this definition, i.e. a ``GET`` request to ``/foo/bar/`` with the Content-Format set to ``0=text/plain``, the ``handle_get_response()`` function will be called, which handles the processing of this request and the creation of a response, if necessary.
+
+TODO: explain how it does this
+
+
+
+Note that microcoap will recognize the endpoints array by its name. This will **not** work if your array is called anything but ``endpoints``!{: .alert .alert-warning }
 
 ### The Makefile
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
