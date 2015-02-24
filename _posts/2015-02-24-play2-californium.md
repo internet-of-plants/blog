@@ -2,6 +2,7 @@
 layout: post
 title: Integrating Californium with the Raspberry Pi
 author: lucas
+date: 2015-02-24
 ---
 
 On our Raspberry Pi web interface we want to display the data from all our plant nodes in "realtime". In this post we will be introducing our technology stack that will be running on the Raspberry Pi and explain step by step how all the pieces fit and can be made to work together.
