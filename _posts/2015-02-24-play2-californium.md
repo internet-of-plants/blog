@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Integrating Californium with the Raspberry Pi
+title: Californium meets the Play Framework
+subtitle: And they have Raspberries for dinner!
 author: lucas
 date: 2015-02-24
 ---
