@@ -24,7 +24,7 @@ To develop the web interface we have chosen the [Play framework](https://playfra
 
 In order to create a new Play application, Java has to be installed on your system. Please follow the guide on [playframework.com](https://playframework.com/documentation/2.3.x/Installing) on how to install the Play framework itself. After the installation you're ready to create a new Play app. Since this article does not intend to be an introduction to the Play framework, only the necessary steps are shown here. For more details check out the framework's [getting started guide](https://playframework.com/documentation/2.3.x/Home).
 
-**Note:** While Play offers the option for development in Scala, this blopost relies entirely on an implementation written in Java, in the the hope that a Java implementation reaches a wider audience. Most parts should be easily interchangeable with Scala code, however.
+**Note:** While Play offers the option for development in Scala, this blogpost relies entirely on an implementation written in Java, in the the hope that a Java implementation reaches a wider audience. Most parts should be easily interchangeable with Scala code, however.
 {: .alert .alert-info }
 
 To create a new Play application based on the Java template, run the following in your console after installing Play:
