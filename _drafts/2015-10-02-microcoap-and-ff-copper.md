@@ -7,7 +7,7 @@ author: Lotte
 date: 2015-02-10
 ---
 
-In [one of our last posts](http://watr.li/what-is-coap.html), we explained that the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
+In [one of our last posts](http://watr.li/what-is-coap.html), we explained how the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
 To do this, we need both of our node types– plant nodes and display nodes– to be able to send, process and answer CoAP requests.
 
 This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. 
@@ -90,9 +90,15 @@ If our CoAP server receives a request which matches this definition, i.e. a ``GE
                                   id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT, COAP_CONTENTTYPE_TEXT_PLAIN);
     }
 
-Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with a few parameters.
+Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with parameters.
 
-TODO explain
+- ``coap_rw_buffer_t *scratch`` TODO
+- ``const coap_packet_t *inpkt`` A pointer to the packet which caused this callback to be called. This way, the callback function can examine its content and determine how it should react. 
+- ``coap_packet_t *outpkt`` Is a pointer to the buffer into which a repsonse packet can be written. 
+- ``uint8_t id_hi`` TODO
+- ``uint8_t id_lo`` TODO
+
+Because ``handle_get_response()`` handles a ``GET`` request, we want our ``handle_get_response()`` to react with a response. So we've whipped up a little function called ``create_response_payload()``, which creates the payload of our response. Then, we use ``coap_make_response()`` to TODO
 
 As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
@@ -114,12 +120,15 @@ Now that our microcoap server is up and running, we'll want to feed it requests 
 ### Setting up a test client
 If you already have a CoAP client which you can use to send requests, that's great. In case you don't, there are two quick and easy solutions to this:
 #### FF Copper
-[Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/) is here to help: Simply install the plugin in your Firefox browser and TODO.
+[Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/) is here to help: Simply install the plugin in your Firefox browser and enter 
 
+	coap://<your microcoap server IP>:5683
 
-#### python 3 and aiocoap
-In case you don't have a GUI either, you can also send requests using python 3:
-TODO
+into the browser. ( 5683 is the standard microcoap port.) Your browser window should show the following:
+
+TODO insert image
+
+If your microcoap server has an IPv6 address, you will have to put the address into square brackets{: .alert .alert-info }
 
 ### marz: feeding RIOT traffic from the outside
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
