@@ -17,7 +17,7 @@ Since no special modifications to the code are needed to get it to run on RIOT, 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
 ## Implementing a simple microcoap server
-This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](TODO add link as soon as it's in master). 
+This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). 
 
 Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
 
@@ -108,7 +108,7 @@ Note that microcoap will recognize the endpoints array by its name. This will **
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
 
 Even though [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project) has a more in-depth explanation of RIOT Makefiles, there is one thing that you shouldn't overlook:  
-Each RIOT Makefile specifies the board the application should be built for using the ``BOARD`` parameter. [In the example Makefile](TODO), you'll find the following line:
+Each RIOT Makefile specifies the board the application should be built for using the ``BOARD`` parameter. [In the example Makefile](https://github.com/RIOT-OS/applications/blob/master/microcoap/Makefile), you'll find the following line:
 
 	BOARD ?= native
 
