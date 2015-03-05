@@ -42,7 +42,7 @@ In ``endpoints.c``, you will find that the example application has created an ar
     	{(coap_method_t)0, NULL, NULL, NULL} /* marks the end of the endpoints array */
 	};
 
-Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.com/1248/microcoap/blob/master/coap.h#L138), we can see that a ``coap_endpoint_t`` is defined as follows (comments added by me):
+Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.com/1248/microcoap/blob/master/coap.h#L138), we can see that a ``coap_endpoint_t`` is defined as follows:
 
     :c:
     typedef struct
