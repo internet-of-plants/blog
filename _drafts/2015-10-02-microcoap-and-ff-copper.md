@@ -144,5 +144,64 @@ Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
 
 Because instances of RIOT's native port are just Linux threads, they lack a real, physical network. Native emulates this missing network through the use of tapbridges. This means that every RIOT native thread is attached to a tap device, which it assumes to be the network device through which all network traffic is sent and received. In order to get the CoAP requests we're sending with Copper through to our RIOT instance, we'll have to tunnel them into RIOT's emulated tap network. The following section will show you how to use [marz](https://github.com/sgso/marz) to accomplish this.
 
+1. Run `sudo apt-get install bridge-utils`
+2. In your RIOT directury, run
 
-TODO
+    ./cpu/native/tapsetup.sh create 2
+
+This will set up two tap devices connected by a bridge. our RIOT application and 
+marz will each listen at one of these devices, and communicate over the bridge.
+
+3. Open two terminal windows.  
+
+**In window #1**, build and start the microcoap-example application:
+
+    cd applications/microcoap
+    make
+    sudo ./bin/native/microcoap-example.elf tap1 -i 1
+
+*Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`!*  
+``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this example.
+
+You should see output similar to this.
+
+    RIOT native uart0 initialized.
+    RIOT native interrupts/signals initialized.
+    LED_GREEN_OFF
+    LED_RED_ON
+    RIOT native board initialized.
+    RIOT native hardware initialization complete.
+
+    kernel_init(): This is RIOT! (Version: 400e-microcoap)
+    kernel_init(): jumping into first task...
+    UART0 thread started.
+    uart0_init() [OK]
+    Initializing transport layer protocol: udp
+    Starting example microcoap server...
+    initializing 6LoWPAN...
+    initializing receive socket...
+    Ready to receive requests.
+
+                Welcome to RIOT
+
+    >
+
+**In window #2**, first install Python development headers by running
+
+    sudo apt-get install python-dev
+
+Afterwards you can install and run marz:
+    
+    pip install --user Twisted && 
+    pip install --user bidict && 
+    git clone https://github.com/sgso/marz &&
+    cd marz &&
+    ./setup.sh 
+
+    ./marz.py
+
+You should see output similar to this.
+
+    WARNING: No route found for IPv6 destination :: (no default route?)
+    Listening on UDP ports: [5683, 2222]
+    Listening on tap interface tap0 with MAC address 9a:80:a3:fc:93:18
