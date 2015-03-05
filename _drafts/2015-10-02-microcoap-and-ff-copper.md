@@ -24,6 +24,8 @@ Please note that microcoap currently doesn't have a nice API to create requests 
 ### main.c
 For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
 
+TODO
+
 ### endpoints.c
 As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a microcoap server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
 
@@ -90,15 +92,21 @@ If our CoAP server receives a request which matches this definition, i.e. a ``GE
                                   id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT, COAP_CONTENTTYPE_TEXT_PLAIN);
     }
 
-Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with parameters.
+Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with parameters. Let's look at the ones that may be important to you.  
 
-- ``coap_rw_buffer_t *scratch`` TODO
-- ``const coap_packet_t *inpkt`` A pointer to the packet which caused this callback to be called. This way, the callback function can examine its content and determine how it should react. 
+- ``const coap_packet_t *inpkt`` Is a pointer to the packet which caused this callback to be called. This way, your callback function can examine its content and determine how it should react. 
 - ``coap_packet_t *outpkt`` Is a pointer to the buffer into which a repsonse packet can be written. 
-- ``uint8_t id_hi`` TODO
-- ``uint8_t id_lo`` TODO
+- ``uint8_t id_hi`` and ``uint8_t id_lo`` Are, when put together, the CoAP Message ID. These Message IDs are used to detect duplicate packets or to match Acknowledgement packets to the requests that triggered them. 
 
-Because ``handle_get_response()`` handles a ``GET`` request, we want our ``handle_get_response()`` to react with a response. So we've whipped up a little function called ``create_response_payload()``, which creates the payload of our response. Then, we use ``coap_make_response()`` to TODO
+Because ``handle_get_response()`` handles a ``GET`` request, we want our ``handle_get_response()`` to react with a response. So we've whipped up a little function called ``create_response_payload()``, which creates the payload of our response. Then, we use ``coap_make_response()`` to build our packet:
+
+- The struct that the ``outpkt`` pointer points to is filled with fresh data.
+- The data behind ``response`` is incorporated into ``outpkt`` as payload.
+- ``id_hi`` and ``id_lo`` are echoed back to help our client match the response to its request.
+- ``COAP_RSPCODE_CONTENT`` sets the message response code to ``2.05 Content``.
+- ``COAP_CONTENTTYPE_TEXT_PLAIN`` sets the media type to ``text/plain``.
+
+When this is done, ``handle_get_response()`` returns the response code that ``coap_make_response()`` gave us, so that ``main.c`` knows if our endeavours were successful.
 
 As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
