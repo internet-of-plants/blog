@@ -26,13 +26,13 @@ The moisture sensor basically consists of two electrodes which should pass a cur
 
 ## Configuring the ADC
 
-In cause of inadequacies inserted by the hardware, the sampled values can be corrected by the hardware. The correction addresses the offset value and the scaling. These values are set in the file `RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_.
+In cause of inadequacies inserted by the hardware, the sampled values can be corrected by the hardware. The correction addresses the offset value and the scaling. These values are set in the file "RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_.
 
-### Setting up `SAMPLE_0_V_OFFSET`
+### Setting up the offset correction
 
 For this test `SAMPLE_REF_V` needs to be initialized with 0. Connect a GND pin to the ADC pin `PA08` and run the test. The application will print values not `0`. We'll call this value "offset_val". This is the value to set for `SAMPLE_0_V_OFFSET`.
 
-### Setting up `SAMPLE_REF_V`
+### Setting up the gain correction
 
 For this test `SAMPLE_0_V_OFFSET` needs to be set like described above. Connect the 3V3 pin to the ADC pin `PA08` and run the test. The application will print values not `4095`. We'll call the measured value "measured_val". The general context for the hardware correction abilities is:
 
