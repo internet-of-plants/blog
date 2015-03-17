@@ -49,7 +49,7 @@ In ``endpoints.c``, you will find that the example application has created an ar
     {
         {COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
         {(coap_method_t)0, NULL, NULL, NULL} /* marks the end of 
-                                                the endpoints array */
+                                              * the endpoints array */
     };
 {: .wide }
 
@@ -58,17 +58,26 @@ Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.co
     :c:
     typedef struct
     {
-        coap_method_t method;               /* (i.e. POST, PUT or GET) */
-        coap_endpoint_func handler;         /* callback function which handles this 
-                                             * type of endpoint (and calls 
-                                             * coap_make_response() at some point) */
-        const coap_endpoint_path_t *path;   /* path towards a resource (i.e. foo/bar/) */ 
-        const char *core_attr;              /* the 'ct' attribute, as defined in RFC7252, section 7.2.1.:
-                                             * "The Content-Format code "ct" attribute 
-                                             * provides a hint about the 
-                                             * Content-Formats this resource returns." 
-                                             * (Section 12.3. lists possible ct values.) */
+        coap_method_t method;              /* (i.e. POST, PUT or GET) */
+        coap_endpoint_func handler;         /* callback function which 
+                                             * handles this type of 
+                                             * endpoint (and calls 
+                                             * coap_make_response() 
+                                             * at some point) */
+        const coap_endpoint_path_t *path; /* path towards a resource 
+                                             * (i.e. foo/bar/) */ 
+        const char *core_attr;             /* the 'ct' attribute, 
+                                             * as defined in RFC7252, 
+                                             * section 7.2.1.:
+                                             * "The Content-Format code 
+                                             * "ct" attribute provides 
+                                             * a hint about the 
+                                             * Content-Formats this 
+                                             * resource returns." 
+                                             * (Section 12.3. lists 
+                                             * possible ct values.) */
     } coap_endpoint_t;
+{: .wide }
 
 This helps us understand the first entry of our ``endpoints[]``.  
 
@@ -76,7 +85,9 @@ This helps us understand the first entry of our ``endpoints[]``.
 - ``handle_get_response`` is the function which should be called in case a suitable request has been received.
 - ``&path`` is a pointer towards the path that specifies the resource which is handled by this entry. ``path`` is defined as  
         
-        static const coap_endpoint_path_t path = {2, {"foo", "bar"}};       
+    static const coap_endpoint_path_t path = {2, {"foo", "bar"}};  
+{: .wide }
+
 a few lines up, so we know that this entry handles a path which contains two segments, namely ``/foo/bar``.
 
 microcoap supports a maximum segment number of two out of the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.
@@ -95,14 +106,21 @@ If our CoAP server receives a request which matches this definition, i.e. a ``GE
     }
 
     /* The handler which handles the path /foo/bar */
-    static int handle_get_response(coap_rw_buffer_t *scratch, const coap_packet_t *inpkt, coap_packet_t *outpkt, uint8_t id_hi, uint8_t id_lo)
+    static int handle_get_response(coap_rw_buffer_t *scratch, 
+                                   const coap_packet_t *inpkt, 
+                                   coap_packet_t *outpkt, 
+                                   uint8_t id_hi, uint8_t id_lo)
     {
         DEBUG("[endpoints]  %s()\n",  __func__);
         create_response_payload(response);
-        /* NOTE: COAP_RSPCODE_CONTENT only works in a packet answering a GET. */
-        return coap_make_response(scratch, outpkt, response, strlen((char*)response),
-                                  id_hi, id_lo, &inpkt->tok, COAP_RSPCODE_CONTENT, COAP_CONTENTTYPE_TEXT_PLAIN);
+        /* COAP_RSPCODE_CONTENT only works in a packet answering a GET. */
+        return coap_make_response(scratch, outpkt, response, 
+                                  strlen((char*)response),
+                                  id_hi, id_lo, &inpkt->tok, 
+                                  COAP_RSPCODE_CONTENT, 
+                                  COAP_CONTENTTYPE_TEXT_PLAIN);
     }
+{: .wide }
 
 Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with parameters. Let's look at the ones that may be important to you.  
 
@@ -163,7 +181,8 @@ Now, the response packet ``rsppkt`` we just built is serialized and written to `
         printf("\n");
         printf("content:\n");
         coap_dumpPacket(&rsppkt);
-        socket_base_sendto(sock_rcv, buf, rsplen, 0, &sa_rcv, sizeof(sa_rcv));
+        socket_base_sendto(sock_rcv, buf, rsplen, 0, 
+                        &sa_rcv, sizeof(sa_rcv));
     }
 
 And that's it! We've now successfully received, processed and answered a CoAP request.
@@ -236,6 +255,7 @@ You should see output similar to this.
     WARNING: No route found for IPv6 destination :: (no default route?)
     Listening on UDP ports: [5683, 2222]
     Listening on tap interface tap0 with MAC address 9a:80:a3:fc:93:18
+{: .wide }
 
 Marz is now ready to tunnel all traffic sent to the IPv6 localhost address ``::1`` on port ``5683``
 
