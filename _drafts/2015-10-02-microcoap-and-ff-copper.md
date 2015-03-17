@@ -204,10 +204,10 @@ If you already have a CoAP client which you can use to send requests, that's gre
 into the browser. 5683 is the standard microcoap port. If your server runs on any address other than localhost, make sure to swap out ``::1`` for the correct address, and bear in mind that only IPv6 addresses need to be surrounded by square brackets!
 Your browser window should show the following:
 
-![Copper start window](../_images/copper_before.png)
+![Copper start window](../images/microcoap/copper_before.png)
 
 Now you can click the big green ``GET`` button. This will send a GET request to the resource ``foo/bar/`` of our microcoap server. Our server should reply with a ``2.05 Content`` message containing the payload ``1337``, which Copper should display like this:
 
-![Copper start window](../_images/copper_after.png)
+![Copper start window](../images/microcoap/copper_after.png)
 
 
