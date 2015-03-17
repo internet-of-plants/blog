@@ -185,7 +185,7 @@ marz will each listen at one of these devices, and communicate over the bridge.
     make
     sudo ./bin/native/microcoap-example.elf tap1 -i 1
 
-Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`! {: .alert .alert-info } 
+Make sure to bind it to ``tap1``, since marz will be bound to ``tap0``! {: .alert .alert-info } 
 ``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this example.
 
 You should see output similar to this.
