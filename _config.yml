@@ -65,6 +65,11 @@ authors:
     url: https://github.com/BytesGalore
     bio: For the plants.
     image: authors/martin.png
+  peter:
+    name: Peter Kietzmann
+    url: https://github.com/PeterKietzmann
+    bio: "<span style='font-size:13px'>Roses are red, violets are blue, Watr.li was watered and that's why it grew</span>"
+    image: authors/peter.png
 
 url:          "http://watr.li"
 source:      .
