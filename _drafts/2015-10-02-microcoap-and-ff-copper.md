@@ -3,7 +3,7 @@ layout: post
 title: CoAP on RIOT
 subtitle: implementing and testing with microcoap and copper
 categories: CoAP
-author: Lotte
+author: lotte
 date: 2015-02-10
 ---
 
