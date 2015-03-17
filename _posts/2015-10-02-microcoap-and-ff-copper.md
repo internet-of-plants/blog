@@ -17,8 +17,10 @@ Since no special modifications to the code are needed to get it to run on RIOT, 
 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
-## Implementing a simple microcoap server
-This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). It might be useful to keep an eye on it as a reference.  
+<!-- more -->
+
+## Implementing a small microcoap server
+This section will walk you through the implementation of a very small microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). It might be useful to keep an eye on it as a reference.  
 Let's go through the code file by file.
 
 ### The Makefile
@@ -200,10 +202,10 @@ Because instances of RIOT's native port are just Linux threads, they lack a real
 1. Run `sudo apt-get install bridge-utils`
 2. In your RIOT directury, run
 
-    ./cpu/native/tapsetup.sh create 2
+        ./cpu/native/tapsetup.sh create 2
 
-This will set up two tap devices connected by a bridge. our RIOT application and 
-marz will each listen at one of these devices, and communicate over the bridge.
+    This will set up two tap devices connected by a bridge. our RIOT application and 
+    marz will each listen at one of these devices, and communicate over the bridge.
 
 3. Open two terminal windows.  
 
@@ -213,9 +215,9 @@ marz will each listen at one of these devices, and communicate over the bridge.
     make
     sudo ./bin/native/microcoap-example.elf tap1 -i 1
 
-Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`!
+Make sure to bind it to ``tap1``, since marz will be bound to ``tap0``!
 {: .alert .alert-info } 
-``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this example.
+``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this post.
 
 You should see output similar to this.
 
