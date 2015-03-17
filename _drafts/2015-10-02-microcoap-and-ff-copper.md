@@ -21,12 +21,6 @@ This section will walk you through the implementation of a very simple microcoap
 
 Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
 
-### main.c
-For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
-
-I'm assuming you're familiar with sockets and writing simple servers, so let's skip right to the interesting part, which starts at line 118:  
-TODO
-
 ### endpoints.c
 As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a microcoap server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
 
@@ -112,6 +106,48 @@ When this is done, ``handle_get_response()`` returns the response code that ``co
 As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
 Note that microcoap will recognize the endpoints array by its name. This will **not** work if your array is called anything but ``endpoints``!{: .alert .alert-warning }
+
+### main.c
+Now, let's see how we can use our newly-defined endpoints to handle requests.
+For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
+
+I'm assuming you're familiar with sockets and writing simple servers, so let's skip right to the interesting part, which starts at line 118:  
+    
+    :c:
+    if (0 != (rc = coap_parse(&pkt, buf, n)))
+        printf("Bad packet rc=%d\n", rc);
+
+checks whether the packet we received is actually a valid CoAP packet.
+
+    :c:
+    else
+    {
+        size_t rsplen = sizeof(buf);
+        coap_packet_t rsppkt;
+        printf("content:\n");
+        coap_dumpPacket(&pkt);
+        coap_handle_req(&scratch_buf, &pkt, &rsppkt);
+
+After the packet passes this test, it is passed to ``coap_handle_req()``. If the method and path of the request match one of the method-path combinations we specified in ``endpoints[]`` earlier on, the ``coap_endpoint_func handler`` provided along with them will be called automagically. The resulting response packet is written into ``rsppkt``.
+
+    :c:
+    if (0 != (rc = coap_build(buf, &rsplen, &rsppkt)))
+        printf("coap_build failed rc=%d\n", rc);
+
+Now, the response packet ``rsppkt`` we just built is serialized and written to ``buf`` so that we can send it through our socket. Note that we also pass a *pointer* to ``rsplen``: This doesn't just tell ``coap_build()`` the size of our buffer. When ``coap_build()`` is done, it will have written the actual CoAP packet size to ``rsplen``. This way, we can avoid sending bogus data which fills the rest of ``buf`` by providing our send function with ``rsplen`` as the buffer size indicator:
+
+    :c:
+    else
+    {
+        printf("Sending packet: ");
+        coap_dump(buf, rsplen, true);
+        printf("\n");
+        printf("content:\n");
+        coap_dumpPacket(&rsppkt);
+        socket_base_sendto(sock_rcv, buf, rsplen, 0, &sa_rcv, sizeof(sa_rcv));
+    }
+
+And that's it! We've now successfully received, processed and answered a CoAP request.
 
 ### The Makefile
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
