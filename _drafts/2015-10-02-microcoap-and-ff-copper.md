@@ -12,7 +12,8 @@ To do this, we need both of our node types– plant nodes and display nodes– t
 
 This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. 
 
-Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on Linux or your Arduino.{: .alert .alert-info }
+Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on Linux or your Arduino.
+{: .alert .alert-info }
 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
@@ -21,7 +22,8 @@ This section will walk you through the implementation of a very simple microcoap
 Let's go through the code file by file.
 
 ### The Makefile
-Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
+Note: this part is only relevant if you use RIOT.
+{: .alert .alert-info }
 
 Even though [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project) has a more in-depth explanation of RIOT Makefiles, there is one thing that you shouldn't overlook:  
 Each RIOT Makefile specifies the board the application should be built for using the ``BOARD`` parameter. [In the example Makefile](https://github.com/RIOT-OS/applications/blob/master/microcoap/Makefile), you'll find the following line:
@@ -30,7 +32,8 @@ Each RIOT Makefile specifies the board the application should be built for using
 
 This means that your application will be built as a *native* applications. the application and the RIOT instance it is running on will run inside a thread on your Linux OS, which is great for testing and debugging. Once you're ready to flash your code to your actual board, substitute ``native`` with the name of your board (in our case ``samr21-xpro``) and [flash it](http://watr.li/samr21-dev-setup-ubuntu.html).
 
-Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
+Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.
+{: .alert .alert-info }
 
 ### endpoints.c
 As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a CoAP server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
@@ -74,7 +77,8 @@ This helps us understand the first entry of our ``endpoints[]``.
 		static const coap_endpoint_path_t path = {2, {"foo", "bar"}};		
 a few lines up, so we know that this entry handles a path which contains two segments, namely ``/foo/bar``.
 
-microcoap supports a maximum segment number of two out of the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.{: .alert .alert-warning }
+microcoap supports a maximum segment number of two out of the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.
+{: .alert .alert-warning }
 
 - ``"ct=0"`` Specifies the Content-Format, which is a hint on how to interpret the payload of the packet (if any). In this case, the content format is 0, which stands for ``text/plain``
  A list of possible Content-Format types can be found in [section 12.3 of the CoAP RFC](https://tools.ietf.org/html/rfc7252#section-12.3).
@@ -116,11 +120,13 @@ When this is done, ``handle_get_response()`` returns the response code that ``co
 
 As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
-Note that microcoap will recognize the endpoints array by its name. This will **not** work if your array is called anything but ``endpoints``!{: .alert .alert-warning }
+Note that microcoap will recognize the endpoints array by its name. This will **not** work if your array is called anything but ``endpoints``!
+{: .alert .alert-warning }
 
 ### main.c
 Now, let's see how we can use our newly-defined endpoints to handle requests.
-For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
+For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project)
+{: .alert .alert-info }
 
 I'm assuming you're familiar with sockets and writing simple servers, so let's skip right to the interesting part, which starts at line 118:  
     
@@ -164,7 +170,8 @@ And that's it! We've now successfully received, processed and answered a CoAP re
 Now that our microcoap server is up and running, we'll want to feed it requests and see if it behaves as expected. This section will guide you through the setup of a simple environment which lets you do this. (Despite the somewhat misleading terminology, this section is *not* about thorough, automated tests.)
 
 ### marz: feeding RIOT traffic from the outside
-Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
+Note: this part is only relevant if you use RIOT.
+{: .alert .alert-info }
 <!-- TODO: what about 6lowpan? -->
 
 Because instances of RIOT's native port are just Linux threads, they lack a real, physical network. Native emulates this missing network through the use of tapbridges. This means that every RIOT native thread is attached to a tap device, which it assumes to be the network device through which all network traffic is sent and received. In order to get the CoAP requests we're sending with Copper through to our RIOT instance, we'll have to tunnel them into RIOT's emulated tap network. The following section will show you how to use [marz](https://github.com/sgso/marz) to accomplish this.
@@ -185,7 +192,8 @@ marz will each listen at one of these devices, and communicate over the bridge.
     make
     sudo ./bin/native/microcoap-example.elf tap1 -i 1
 
-Make sure to bind it to ``tap1``, since marz will be bound to ``tap0``! {: .alert .alert-info } 
+Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`!
+{: .alert .alert-info } 
 ``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this example.
 
 You should see output similar to this.
