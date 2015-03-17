@@ -1,7 +1,7 @@
 ---
 layout: post
-title: CoAP on RIOT
-subtitle: implementing and testing with microcoap and copper
+title: Serving CoAP on RIOT
+subtitle: Building a small microcoap server tested with Copper
 categories: CoAP
 author: lotte
 date: 2015-03-17
