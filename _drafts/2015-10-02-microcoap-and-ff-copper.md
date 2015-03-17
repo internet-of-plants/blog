@@ -44,12 +44,14 @@ You will have to create a ``const coap_endpoint_t endpoints[]`` and fill it to m
 
 In ``endpoints.c``, you will find that the example application has created an array of ``coap_endpoint_t`` called ``endpoints``:
 
-	:c:
-	const coap_endpoint_t endpoints[] =
-	{
-    	{COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
-    	{(coap_method_t)0, NULL, NULL, NULL} /* marks the end of the endpoints array */
-	};
+    :c:
+    const coap_endpoint_t endpoints[] =
+    {
+        {COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
+        {(coap_method_t)0, NULL, NULL, NULL} /* marks the end of 
+                                                the endpoints array */
+    };
+{: .wide }
 
 Now, if we look at the ``coap.h`` file of [the microcoap code](https://github.com/1248/microcoap/blob/master/coap.h#L138), we can see that a ``coap_endpoint_t`` is defined as follows:
 
@@ -73,8 +75,8 @@ This helps us understand the first entry of our ``endpoints[]``.
 - ``COAP_METHOD_GET`` specifies that this entry describes how to handle a ``GET`` request.
 - ``handle_get_response`` is the function which should be called in case a suitable request has been received.
 - ``&path`` is a pointer towards the path that specifies the resource which is handled by this entry. ``path`` is defined as  
-		
-		static const coap_endpoint_path_t path = {2, {"foo", "bar"}};		
+        
+        static const coap_endpoint_path_t path = {2, {"foo", "bar"}};       
 a few lines up, so we know that this entry handles a path which contains two segments, namely ``/foo/bar``.
 
 microcoap supports a maximum segment number of two out of the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.
@@ -85,8 +87,8 @@ microcoap supports a maximum segment number of two out of the box. If you need m
 
 If our CoAP server receives a request which matches this definition, i.e. a ``GET`` request to ``/foo/bar/`` with the Content-Format set to ``0=text/plain``, the ``handle_get_response()`` function will be called, which handles the processing of this request and the creation of a response, if necessary. Let's look at this function in detail:
 
-	:c:
-	void create_response_payload(const uint8_t *buffer)
+    :c:
+    void create_response_payload(const uint8_t *buffer)
     {
         char *response = "1337";
         memcpy((void*)buffer, response, strlen(response));
@@ -179,7 +181,7 @@ Because instances of RIOT's native port are just Linux threads, they lack a real
 1. Run `sudo apt-get install bridge-utils`
 2. In your RIOT directury, run
 
-	./cpu/native/tapsetup.sh create 2
+    ./cpu/native/tapsetup.sh create 2
 
 This will set up two tap devices connected by a bridge. our RIOT application and 
 marz will each listen at one of these devices, and communicate over the bridge.
