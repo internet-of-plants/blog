@@ -275,4 +275,4 @@ Now you can click the big green ``GET`` button. This will send a GET request to 
 
 ![Copper start window](../images/microcoap/copper_after.png)
 
-
+When all of this works, you're ready to go. Extend ``endpoints[]`` with you own methods and paths, create response payloads that actually make sense and build awesome stuff with your new CoAP server. Happy hacking!
