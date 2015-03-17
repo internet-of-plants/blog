@@ -24,6 +24,7 @@ Please note that microcoap currently doesn't have a nice API to create requests 
 ### main.c
 For an in-depth explanation of the structure of a RIOT application, please [see this RIOT wiki page](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project){: .alert .alert-info }
 
+I'm assuming you're familiar with sockets and writing simple servers, so let's skip right to the interesting part, which starts at line 118:  
 TODO
 
 ### endpoints.c
@@ -125,19 +126,6 @@ This means that your application will be built as a *native* applications. the a
 ## Testing your microcoap server
 Now that our microcoap server is up and running, we'll want to feed it requests and see if it behaves as expected. This section will guide you through the setup of a simple environment which lets you do this. (Despite the somewhat misleading terminology, this section is *not* about thorough, automated tests.)
 
-### Setting up a test client
-If you already have a CoAP client which you can use to send requests, that's great. In case you don't, there are two quick and easy solutions to this:
-#### FF Copper
-[Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/) is here to help: Simply install the plugin in your Firefox browser and enter 
-
-	coap://<your microcoap server IP>:5683
-
-into the browser. ( 5683 is the standard microcoap port.) Your browser window should show the following:
-
-TODO insert image
-
-If your microcoap server has an IPv6 address, you will have to put the address into square brackets{: .alert .alert-info }
-
 ### marz: feeding RIOT traffic from the outside
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
 <!-- TODO: what about 6lowpan? -->
@@ -147,7 +135,7 @@ Because instances of RIOT's native port are just Linux threads, they lack a real
 1. Run `sudo apt-get install bridge-utils`
 2. In your RIOT directury, run
 
-    ./cpu/native/tapsetup.sh create 2
+	./cpu/native/tapsetup.sh create 2
 
 This will set up two tap devices connected by a bridge. our RIOT application and 
 marz will each listen at one of these devices, and communicate over the bridge.
@@ -160,7 +148,7 @@ marz will each listen at one of these devices, and communicate over the bridge.
     make
     sudo ./bin/native/microcoap-example.elf tap1 -i 1
 
-*Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`!*  
+Make sure to bind it to ``tap1``, since marz will be bound to ``tap0`! {: .alert .alert-info } 
 ``-i 1`` forces your RIOT instance to match its id to the one specified in marz.config. You should **only** specify this for the **one** RIOT that marz tunnels to. This is sufficient for this example; if you need help running more than one RIOT with marz, please contact the author of this example.
 
 You should see output similar to this.
@@ -205,3 +193,21 @@ You should see output similar to this.
     WARNING: No route found for IPv6 destination :: (no default route?)
     Listening on UDP ports: [5683, 2222]
     Listening on tap interface tap0 with MAC address 9a:80:a3:fc:93:18
+
+Marz is now ready to tunnel all traffic sent to the IPv6 localhost address ``::1`` on port ``5683``
+
+### Setting up a test client
+If you already have a CoAP client which you can use to send requests, that's great. In case you don't, [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/) is here to help: Simply install the Copper plugin in your Firefox browser and enter 
+
+    coap://[::1]:5683/foo/bar
+
+into the browser. 5683 is the standard microcoap port. If your server runs on any address other than localhost, make sure to swap out ``::1`` for the correct address, and bear in mind that only IPv6 addresses need to be surrounded by square brackets!
+Your browser window should show the following:
+
+![Copper start window](../images/microcoap/copper_before.png)
+
+Now you can click the big green ``GET`` button. This will send a GET request to the resource ``foo/bar/`` of our microcoap server. Our server should reply with a ``2.05 Content`` message containing the payload ``1337``, which Copper should display like this:
+
+![Copper start window](../images/microcoap/copper_after.png)
+
+
