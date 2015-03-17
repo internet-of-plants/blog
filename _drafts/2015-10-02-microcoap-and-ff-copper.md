@@ -4,7 +4,7 @@ title: CoAP on RIOT
 subtitle: implementing and testing with microcoap and copper
 categories: CoAP
 author: lotte
-date: 2015-02-10
+date: 2015-03-17
 ---
 
 In [one of our last posts](http://watr.li/what-is-coap.html), we explained how the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
