@@ -7,7 +7,7 @@ author: lotte
 date: 2015-03-17
 ---
 
-In [one of our last posts](http://watr.li/what-is-coap.html), we explained how the [Constrained Application Protocol](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
+In [a previous post](http://watr.li/what-is-coap.html), we explained how the [Constrained Application Protocol (CoAP)](http://coap.technology) enables us to exchange data between nodes in the Internet of Plants using a request/reply cycle similar to that of HTTP. 
 To do this, we need both of our node types– plant nodes and display nodes– to be able to send, process and answer CoAP requests.
 
 This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. 
@@ -17,7 +17,8 @@ Since no special modifications to the code are needed to get it to run on RIOT, 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
 ## Implementing a simple microcoap server
-This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). It is advised that you keep an eye on it as a reference. Let's go through the code file by file.
+This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). It might be useful to keep an eye on it as a reference.  
+Let's go through the code file by file.
 
 ### The Makefile
 Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
@@ -32,7 +33,7 @@ This means that your application will be built as a *native* applications. the a
 Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
 
 ### endpoints.c
-As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a microcoap server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
+As explained in our {% postlink 2015-02-18-what-is-coap previous post %}, a CoAP server answers requests which are directed at the *resource* of a certain *endpoint* (namely, the IP address of our server). Our server will thus have to define the resources which can be requested, and how to handle these requests.  
 
 Probably a bit confusingly named, microcoap handles this with the help of an array called ``endpoints``.
 This array should *not* contain information about any endpoints (i.e. IP and port pairs), but information about your resources.  
@@ -73,7 +74,7 @@ This helps us understand the first entry of our ``endpoints[]``.
 		static const coap_endpoint_path_t path = {2, {"foo", "bar"}};		
 a few lines up, so we know that this entry handles a path which contains two segments, namely ``/foo/bar``.
 
-microcoap supports a maximum segment number of two out f the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.{: .alert .alert-warning }
+microcoap supports a maximum segment number of two out of the box. If you need more, you'll have to adjust ``MAX_SEGMENTS`` in ``coap.h``.{: .alert .alert-warning }
 
 - ``"ct=0"`` Specifies the Content-Format, which is a hint on how to interpret the payload of the packet (if any). In this case, the content format is 0, which stands for ``text/plain``
  A list of possible Content-Format types can be found in [section 12.3 of the CoAP RFC](https://tools.ietf.org/html/rfc7252#section-12.3).
@@ -233,7 +234,7 @@ If you already have a CoAP client which you can use to send requests, that's gre
 
     coap://[::1]:5683/foo/bar
 
-into the browser. 5683 is the standard microcoap port. If your server runs on any address other than localhost, make sure to swap out ``::1`` for the correct address, and bear in mind that only IPv6 addresses need to be surrounded by square brackets!
+into the browser. 5683 is the standard CoAP port. If your server runs on any address other than localhost, make sure to swap out ``::1`` for the correct address, and bear in mind that only IPv6 addresses need to be surrounded by square brackets!
 Your browser window should show the following:
 
 ![Copper start window](../images/microcoap/copper_before.png)
