@@ -12,7 +12,7 @@ To do this, we need both of our node types– plant nodes and display nodes– t
 
 This post explains how to implement a simple CoAP server on our *plant nodes*, which run [RIOT](http://www.riot-os.org), using RIOTs [microcoap](https://github.com/1248/microcoap) package. 
 
-Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on linux or your Arduino.{: .alert .alert-info }
+Since no special modifications to the code are needed to get it to run on RIOT, this guide may also be useful to you if you're looking to run microcoap on Linux or your Arduino.{: .alert .alert-info }
 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
@@ -90,7 +90,7 @@ If our CoAP server receives a request which matches this definition, i.e. a ``GE
 Whenever a callback function that is defined in an ``coap_endpoint_t`` is called, it is provided with parameters. Let's look at the ones that may be important to you.  
 
 - ``const coap_packet_t *inpkt`` Is a pointer to the packet which caused this callback to be called. This way, your callback function can examine its content and determine how it should react. 
-- ``coap_packet_t *outpkt`` Is a pointer to the buffer into which a repsonse packet can be written. 
+- ``coap_packet_t *outpkt`` Is a pointer to the buffer into which a response packet can be written. 
 - ``uint8_t id_hi`` and ``uint8_t id_lo`` Are, when put together, the CoAP Message ID. These Message IDs are used to detect duplicate packets or to match Acknowledgement packets to the requests that triggered them. 
 
 Because ``handle_get_response()`` handles a ``GET`` request, we want our ``handle_get_response()`` to react with a response. So we've whipped up a little function called ``create_response_payload()``, which creates the payload of our response. Then, we use ``coap_make_response()`` to build our packet:
@@ -101,7 +101,7 @@ Because ``handle_get_response()`` handles a ``GET`` request, we want our ``handl
 - ``COAP_RSPCODE_CONTENT`` sets the message response code to ``2.05 Content``.
 - ``COAP_CONTENTTYPE_TEXT_PLAIN`` sets the media type to ``text/plain``.
 
-When this is done, ``handle_get_response()`` returns the response code that ``coap_make_response()`` gave us, so that ``main.c`` knows if our endeavours were successful.
+When this is done, ``handle_get_response()`` returns the response code that ``coap_make_response()`` gave us, so that ``main.c`` knows if our endeavors were successful.
 
 As you can see, ``create_response_payload()`` is as simple as it gets in this example. In a real application, however, this might be where you'll read out sensor data which has been requested.
 
@@ -157,7 +157,7 @@ Each RIOT Makefile specifies the board the application should be built for using
 
 	BOARD ?= native
 
-This means that your application will be built as a *native* applications. the application and the RIOT instance it is running on will run inside a thread on your Linux OS, which is great for testing and debugging. Once you're ready to flash your code to your actual board, substitute ``native`` with the name of your board (in our case ``smar21-xpro``) and [flash it](http://watr.li/samr21-dev-setup-ubuntu.html).
+This means that your application will be built as a *native* applications. the application and the RIOT instance it is running on will run inside a thread on your Linux OS, which is great for testing and debugging. Once you're ready to flash your code to your actual board, substitute ``native`` with the name of your board (in our case ``samr21-xpro``) and [flash it](http://watr.li/samr21-dev-setup-ubuntu.html).
 
 ## Testing your microcoap server
 Now that our microcoap server is up and running, we'll want to feed it requests and see if it behaves as expected. This section will guide you through the setup of a simple environment which lets you do this. (Despite the somewhat misleading terminology, this section is *not* about thorough, automated tests.)
@@ -205,10 +205,6 @@ You should see output similar to this.
     initializing 6LoWPAN...
     initializing receive socket...
     Ready to receive requests.
-
-                Welcome to RIOT
-
-    >
 
 **In window #2**, first install Python development headers by running
 
