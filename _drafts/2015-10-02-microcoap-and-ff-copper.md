@@ -17,7 +17,17 @@ Since no special modifications to the code are needed to get it to run on RIOT, 
 We'll also show you how to test your microcoap server with [Copper](https://addons.mozilla.org/de/firefox/addon/copper-270430/), using [marz](https://github.com/sgso/marz) to tunnel the requests to your RIOT instance.
 
 ## Implementing a simple microcoap server
-This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). 
+This section will walk you through the implementation of a very simple microcoap server. In the end, you'll have a server which is able to answer ``GET`` requests to ``/foo/bar``, and (hopefully :) ) the knowledge how to extend this server at will. This guide is based on the code of [this example application](https://github.com/RIOT-OS/applications/tree/master/microcoap). It is advised that you keep an eye on it as a reference. Let's go through the code file by file.
+
+### The Makefile
+Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
+
+Even though [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project) has a more in-depth explanation of RIOT Makefiles, there is one thing that you shouldn't overlook:  
+Each RIOT Makefile specifies the board the application should be built for using the ``BOARD`` parameter. [In the example Makefile](https://github.com/RIOT-OS/applications/blob/master/microcoap/Makefile), you'll find the following line:
+
+    BOARD ?= native
+
+This means that your application will be built as a *native* applications. the application and the RIOT instance it is running on will run inside a thread on your Linux OS, which is great for testing and debugging. Once you're ready to flash your code to your actual board, substitute ``native`` with the name of your board (in our case ``samr21-xpro``) and [flash it](http://watr.li/samr21-dev-setup-ubuntu.html).
 
 Please note that microcoap currently doesn't have a nice API to create requests on its own (i.e. without being triggered by a client). It can be done, though, but that's for another blog post.  {: .alert .alert-info }
 
@@ -148,16 +158,6 @@ Now, the response packet ``rsppkt`` we just built is serialized and written to `
     }
 
 And that's it! We've now successfully received, processed and answered a CoAP request.
-
-### The Makefile
-Note: this part is only relevant if you use RIOT. {: .alert .alert-info }
-
-Even though [the RIOT wiki](https://github.com/RIOT-OS/RIOT/wiki/Creating-your-first-RIOT-project) has a more in-depth explanation of RIOT Makefiles, there is one thing that you shouldn't overlook:  
-Each RIOT Makefile specifies the board the application should be built for using the ``BOARD`` parameter. [In the example Makefile](https://github.com/RIOT-OS/applications/blob/master/microcoap/Makefile), you'll find the following line:
-
-	BOARD ?= native
-
-This means that your application will be built as a *native* applications. the application and the RIOT instance it is running on will run inside a thread on your Linux OS, which is great for testing and debugging. Once you're ready to flash your code to your actual board, substitute ``native`` with the name of your board (in our case ``samr21-xpro``) and [flash it](http://watr.li/samr21-dev-setup-ubuntu.html).
 
 ## Testing your microcoap server
 Now that our microcoap server is up and running, we'll want to feed it requests and see if it behaves as expected. This section will guide you through the setup of a simple environment which lets you do this. (Despite the somewhat misleading terminology, this section is *not* about thorough, automated tests.)
