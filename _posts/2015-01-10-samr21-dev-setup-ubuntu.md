@@ -60,7 +60,7 @@ Now that all requirements are installed, OpenOCD can be built:
         rm -r $TMP &&
         mkdir -p $TMP &&
         cd $TMP &&
-        git clone http://repo.or.cz/openocd.git &&
+        git clone https://github.com/watr-li/OpenOCD.git openocd &&
         cd openocd &&
         ./bootstrap &&
         ./configure --enable-maintainer-mode \
