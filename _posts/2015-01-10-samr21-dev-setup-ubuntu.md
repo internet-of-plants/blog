@@ -68,6 +68,7 @@ Now that all requirements are installed, OpenOCD can be built:
                     --enable-hidapi-libusb &&
         make &&
         sudo make install
+{: .wide }
 
 
 
