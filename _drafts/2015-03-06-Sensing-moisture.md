@@ -31,11 +31,11 @@ In case of inadequacies inserted by the hardware, the sampled values can be corr
 
 ### Setting up the offset correction
 
-For this test `SAMPLE_REF_V` needs to be initialized with 0. Connect a GND pin to the ADC pin `PA08` and run the test. The application will print values not `0`. We'll call this value "offset_val". This is the value to set for `SAMPLE_0_V_OFFSET`.
+For this test `SAMPLE_REF_V` needs to be initialized with 0. Connect a GND pin to the ADC pin `PA06` and run the test. The application will print values not `0`. We'll call this value "offset_val". This is the value to set for `SAMPLE_0_V_OFFSET`.
 
 ### Setting up the gain correction
 
-For this test `SAMPLE_0_V_OFFSET` needs to be set like described above. Connect the 3V3 pin to the ADC pin `PA08` and run the test. The application will print values not `4095`. We'll call the measured value "measured_val". The general equation for the hardware correction abilities is:
+For this test `SAMPLE_0_V_OFFSET` needs to be set like described above. Connect the 3V3 pin to the ADC pin `PA06` and run the test. The application will print values not `4095`. We'll call the measured value "measured_val". The general equation for the hardware correction abilities is:
 
 `expected_val = (measured_val - offset_val) * gain_val`
 
@@ -77,10 +77,12 @@ Here is just a quick checklist:
 
 - Sensor supply to board pin `PA13`
 - Sensor GND to board GND
-- Sensor value to ADC pin `PA08`
-- Board reference voltage to ADC reference input pin `PA04`
-- Board UART_1_TX_PIN PA22 to external Converter UART_RX pin
+- Sensor value to ADC pin `PA06`
+- Board reference voltage 3V3 to ADC reference input pin `PA04`
 - Board UART_1_RX_PIN PA23 to external Converter UART_TX pin
+- Board UART_1_TX_PIN PA22 to external Converter UART_RX pin
+- Board GND to external Converter UART_GND pin
+
 
 
 ## Running the test application
