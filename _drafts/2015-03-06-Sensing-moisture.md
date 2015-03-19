@@ -31,11 +31,11 @@ In case of inadequacies inserted by the hardware, the sampled values can be corr
 
 ### Setting up the offset correction
 
-<<<<<<< Updated upstream
+
 For this test `SAMPLE_REF_V` needs to be initialized with 0. Connect a GND pin to the ADC pin `PA06` and run the test. The application will print values not `0`. We'll call this value "offset_val". This is the value to set for `SAMPLE_0_V_OFFSET`.
-=======
+
 For this test `SAMPLE_REF_V` needs to be initialized with 0. Connect a GND pin to the ADC pin (both from the board) `PA08` and run the test. The application will print values not `0`. We'll call this value "offset_val". This is the value to set for `SAMPLE_0_V_OFFSET`.
->>>>>>> Stashed changes
+
 
 ### Setting up the gain correction
 
