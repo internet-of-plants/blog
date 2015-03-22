@@ -3,7 +3,7 @@
 layout: post
 title: Sensing the moisture of a plants soil
 subtitle: How to setup Atmel SAM R21, ADC and SEN0114
-cover_image: covers/plant_pot.jpg
+cover_image: covers/plant_pot_cropped.jpg
 authors:
 - peter
 
@@ -21,17 +21,32 @@ authors:
     - Pull request [Watrli plant node #4](https://github.com/watr-li/RIOT/pull/4)
 - You know how to build and flash software to the board like described in [this blogpost](http://watr.li/samr21-dev-setup-ubuntu.html)
 
+One of the last pieces of the Watr.li puzzle was to measure the humidity of a plant's soil with one of our monitoring nodes. How we connected our humidity sensor to the SAM R21 and sampled it's values is the topic of this post.
+
 <!-- more -->
 
-# This is how it works
+The humidity sensor basically consists of two electrodes which should pass a current. These are tucked into the soil whose humidity we want to measure. The soil becomes more electrically conductive the more humid it is, increasing the current flow.
 
-The moisture sensor basically consists of two electrodes which should pass a current. These were tucked into the soil which is more ore less electrically conductive, depending on the moisture of the soil. A moister soil increases the conductivity and therefore decreases the resistance of the soil which leads to a higher current flow. On-sensor, a common collector circuit is modulated that results in a voltage variation at its output which is the sensors output pin. This value is sampled by the analog to digital converter (ADC) of the Atmel board. The ADC is used in a operation mode that compares the input signal by a reference voltage and then quantizes the the signal. The maximum sampled value is reached when the input signal has the same magnitude as the reference voltage. Besides of small voltage drops caused by the transistor circuit, the sensor should roughly reach this value under water. Setting the sampling width of the ADC to 12bit leads to a maximum value of 2^12 -1 = 4095 ("expected_val"). Assuming a linear correlation between the voltage at the sensor's output and the moisture, one can divide the range into three commensurate intervals to classify the moisture as dry, normal and wet.
+TOOD: On-sensor, a common collector circuit is modulated that results in a voltage variation at its output which is the sensors output pin.
 
-## Configuring the ADC calibration
+We sample this value using the "analog to digital converter" ADC on the SAM R21 board. The ADC is used in an operation mode that compares the input signal to a reference voltage and then quantizes the signal. The maximum sampled value is reached when the input has the same magnitude as the reference voltage, 3.3V for our scenario. Ignoring snall voltage drops caused by the transistor circuit, the sensor should roughly reach this maximum value when submerged in water. We used the ADC with a sampling width of 12 bit, leading to a maximum value of 2^12-1 = 4095.
 
-In case of inadequacies inserted by the hardware, the sampled values can be corrected by the hardware. The correction BEZIEHT SICH AUF the offset value and the scaling. These values are set in the file "RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_.
+(TODO: Use this? I think the interpretation of the values should not be part of the sensor applciation anyway). Assuming a linear correlation between the voltage at the sensor's output pin and the humidity, we can divide the range into three appropriate intervals to classify the soil as dry, normal or wet.
+
+
+# Calibrating the ADC
+
+Ideally, the correlation between sampled voltage and value is as shown in the figure below, i.e. the "Gain" is 1 and the "Offset" is 0.
+
+<img src="images/sensing-moisture/calibration.png">
+
+In our case, however the value never dropped below a certain minimum and the maximum value of 4095 (i.e. 3.3V) was never reached, even when the sensor was submerged in water. To account for these inaccuracies inserted by the hardware, we needed to calibrate the ADC to the components being used.
+
+<!-- In case of inaccuries caused by the hardware, the sampled values can be corrected by the hardware. The correction BEZIEHT SICH AUF the offset value and the scaling. These values are set in the file "RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_. -->
 
 note that for all work with the adc, the 3V3 reference voltage has to be connected to PA04
+
+
 
 ### Setting up the offset correction
 
