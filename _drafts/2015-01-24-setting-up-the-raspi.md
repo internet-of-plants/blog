@@ -21,7 +21,11 @@ author: lucas
 2. sudo modprobe rndis_host
 
 3. sudo ip -6 address add 2001:db8:1::1/64 dev usb0
+sudo ip -6 route add fe80::660d:0:0:0/128 dev usb0
+sudo ip -6 route list
 
+ip -6 neigh
+ip -6 neigh replace fe80::660d:0:0:0 lladdress
 
 4. sudo su // for ND
         - echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
