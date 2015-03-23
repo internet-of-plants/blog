@@ -303,3 +303,16 @@ a {
         background:none;
     }
 }
+
+dl dt {
+    float: left;
+    padding-right: 15px;
+    clear: both;
+}
+
+
+dl dd {
+    margin-bottom: 30px;
+    padding-left: 20px;
+
+}
