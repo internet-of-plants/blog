@@ -13,7 +13,7 @@ authors:
 
 - You have the appropriate hardware
     - Atmel board [SAM R21 Xplained Pro](http://www.atmel.com/Images/Atmel-42243-SAMR21-Xplained-Pro_User-Guide.pdf)
-    - Moisture Sensor [SEN0114](http://www.dfrobot.com/index.php?route=product/product&product_id=599)
+    - 
     - External USB/UART converter to see STDOUTs
     - Some Jumper Cables
 - You have the appropriate software
@@ -25,13 +25,9 @@ One of the last pieces of the Watr.li puzzle was to measure the humidity of a pl
 
 <!-- more -->
 
-The humidity sensor basically consists of two electrodes which should pass a current. These are tucked into the soil whose humidity we want to measure. The soil becomes more electrically conductive the more humid it is, increasing the current flow.
+The humidity sensor basically consists of two electrodes which should pass a current. These are tucked into the soil whose humidity we want to measure. The soil becomes more electrically conductive the more humid it is, increasing the current flow. On the sensor, a common collector circuit then translates the change in current flow to a change in voltage at its output, which is the sensor's output pin.
 
-TOOD: On-sensor, a common collector circuit is modulated that results in a voltage variation at its output which is the sensors output pin.
-
-We sample this value using the "analog to digital converter" ADC on the SAM R21 board. The ADC is used in an operation mode that compares the input signal to a reference voltage and then quantizes the signal. The maximum sampled value is reached when the input has the same magnitude as the reference voltage, 3.3V for our scenario. Ignoring snall voltage drops caused by the transistor circuit, the sensor should roughly reach this maximum value when submerged in water. We used the ADC with a sampling width of 12 bit, leading to a maximum value of 2^12-1 = 4095.
-
-(TODO: Use this? I think the interpretation of the values should not be part of the sensor applciation anyway). Assuming a linear correlation between the voltage at the sensor's output pin and the humidity, we can divide the range into three appropriate intervals to classify the soil as dry, normal or wet.
+We sample this value using the "analog to digital converter" (ADC) on the SAM R21 board. The ADC is used in an operation mode that compares the input signal to a reference voltage and then quantizes the signal. The maximum sampled value is reached when the input has the same magnitude as the reference voltage, 3.3V for our scenario. Ignoring small voltage drops caused by the transistor circuit, the sensor should roughly reach this maximum value when submerged in water. We used the ADC with a sampling width of 12-bit, leading to a maximum value of 2^12-1 = 4095.
 
 
 # Calibrating the ADC
@@ -40,40 +36,70 @@ Ideally, the correlation between sampled voltage and value is as shown in the fi
 
 <img src="images/sensing-moisture/calibration.png">
 
+(mention that this is the norm with cheap ADCs)
 In our case, however the value never dropped below a certain minimum and the maximum value of 4095 (i.e. 3.3V) was never reached, even when the sensor was submerged in water. To account for these inaccuracies inserted by the hardware, we needed to calibrate the ADC to the components being used.
+
+Unfortunately, it is currently not possible to calibrate the ADC without modifying the RIOT source tree, so that is what we will have to do. The relevant settings are stored in the `boards/samd21-xpro/include/periph.conf` file. The values we will need to tweak are `SAMPLE_0_V_OFFSET` (the offset) and `SAMPLE_REF_V` (the gain). Do determine these values we will need to run the test application located at TODO TODO TODO. Flashing and running a RIOT application is explained in TODO TODO TODO.
 
 <!-- In case of inaccuries caused by the hardware, the sampled values can be corrected by the hardware. The correction BEZIEHT SICH AUF the offset value and the scaling. These values are set in the file "RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_. -->
 
-note that for all work with the adc, the 3V3 reference voltage has to be connected to PA04
+<!-- note that for all work with the adc, the 3V3 reference voltage has to be connected to PA04 -->
 
 
 
-### Setting up the offset correction
+## Running the test application
 
 
-For this test `SAMPLE_REF_V` needs to be initialized with 0 and `ADC_0_CORRECTION_EN` has to be disabled, i.e. set to 0 too. Connect a GND pin to the ADC pin `PA06` and run the test. The application will print values not `0`. We'll call this value "offset_value". This is the value to set for `SAMPLE_0_V_OFFSET`.
+
+The test application can be on GitHub. In any directory, first clone the [Watr.li RIOT fork](https://github.com/watr-li/RIOT) and check out the "watrli" branch and then get the adc_test node from the [Watr.li nodes repository](https://github.com/watr-li/nodes):
+
+    git clone https://github.com/watr-li/RIOT.git &&
+        cd RIOT &&
+        git checkout watrli &&
+        cd .. &&
+        https://github.com/watr-li/nodes.git &&
+        cd nodes/adc_test &&
+        BOARD=samr21-xpro make
+
+
+You need to build the test application in `RIOT/tests/plant_node` PETERS PR and flash it to the board as described in [this blogpost](http://watr.li/samr21-dev-setup-ubuntu.html). Connecting to a terminal will show you the STDOUT which may help in testing. The sampled (moisture-)values are printed continuously. You can manipulate these values by connecting the sensor's spikes with your fingers, putting them into a glass of water or in you plant pot. Please also read the _Please note_ section.
+
+
+## Setting up the offset correction
+
+In this test we will identify the offset, i.e. the minimum value the ADC can return with our setup. For this, `SAMPLE_REF_V` needs to be initialized with 0 and `ADC_0_CORRECTION_EN` has to be disabled, i.e. set to 0 too. Connect a GND pin to the ADC pin `PA06` and a the 3.3V (the reference voltage) to the `PA04` pin. Now run the test. The application will print values larger than `0`. We'll call this value "offset_value". This is the value to set for `SAMPLE_0_V_OFFSET`.
 
 <img src="images/sensing-moisture/offset-calibration.png">
 
-### Setting up the gain correction
 
-For this test `SAMPLE_0_V_OFFSET` needs to be set like described above and `SAMPLE_REF_V` has to be set to 2048. Connect the 3V3 pin to the ADC pin `PA06` and run the test. The application should print values unequal to `4095`. We'll call the measured value "measured_val". The general equation for the hardware correction abilities is:
+## Setting up the gain correction
 
-`expected_val = (measured_val - offset_value) * gain_value`
-
-Substituting the known values and solving the equation vor gain_value we get:
-
-`gain_value = (expected_val) / (measured_val - offset_value)`
+This time we try to discover the maximum value the ADC measures when the reference voltage is supplied. For this test `SAMPLE_0_V_OFFSET` needs to be set as described above and `SAMPLE_REF_V` has to be set to 2048. Connect the 3.3V pin to the ADC pin `PA06` and run the test and to the `PA04` pin. The application should print values smaller than `4095`. We'll call this value the "measured_value".
 
 <img src="images/sensing-moisture/gain-calibration.png">
 
-### Example
+
+## Calculating the gain
+
+The general equation for the ADC hardware correction abilities is:
+
+    expected_value = (measured_value - offset_value) * gain_value
+{: .wide }
+
+Substituting the known values and solving the equation for gain_value we get:
+
+    gain_value = (expected_value) / (measured_value - offset_value)
+{: .wide }
 
 In my case, I measured the following values:
 
+* For the `expected_value` we'll use 4095 since that is the maximum value the ADC can return with 12-bit resolution. 
 * `offset_value = 90`
-* `measured_val = 3700`
-* `gain_value = (4095) / (3700 - 90) ≈ 1.13`
+* `measured_value = 3700`
+
+The gain value thus becomes
+
+    gain_value = (4095) / (3700 - 90) ≈ 1.13
 
 To set the microcontroller to the correct 12-bit gain value, we will need a truncated [binary fixed-point](http://www.cs.uwm.edu/~cs151/Bacon/Lecture/HTML/ch03s07.html) representation ([this site](http://www.exploringbinary.com/binary-converter/) lets you convert back and forth between the formats):
 
@@ -94,31 +120,21 @@ This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter
 * `SAMPLE_0_V_OFFSET = 90`
 * `SAMPLE_REF_V = 2314`
 
-## Setup
 
-In concequence of pin conflicts on the board, the STDOUT device needed to be changed from `UART_0` to `UART_1`. This is why you need to connect an external USB/UART converter if you want to see the STDOUT prints on a terminal.
+
+
+# Final setup
+
+After calibrating the ADC, we can finally connect the sensor and get some humidity values! For the sensor, we've used a [SEN0114 Moisture Sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) from dfrobot, which is connected to the board as follows:
 
 <img src="images/sensing-moisture/sensor.png">
 
+Due to pin conflicts on the board, the STDOUT device needed to be changed from `UART_0` to `UART_1`. This prevented us from seeing the debug output from the board when the sensor was connected. Aa a result, we needed to employ an additional USB/UART converter to see the standard output from the board, which we connected as illustrated below:
+
 <img src="images/sensing-moisture/uart.png">
 
-A schematic block diagram will follow soon. Please compare `RIOT/boards/samd21-xpro/include/periph.conf`to get the needed details. 
-
-Here is just a quick checklist:
-
-- Sensor supply to board pin `PA13`
-- Sensor GND to board GND
-- Sensor value to ADC pin `PA06`
-- Board reference voltage 3V3 to ADC reference input pin `PA04`
-- Board UART_1_RX_PIN PA23 to external Converter UART_TX pin
-- Board UART_1_TX_PIN PA22 to external Converter UART_RX pin
-- Board GND to external Converter UART_GND pin
 
 
-
-## Running the test application
-
-You need to build the test application in `RIOT/tests/plant_node` PETERS PR and flash it to the board as described in [this blogpost](http://watr.li/samr21-dev-setup-ubuntu.html). Connecting to a terminal will show you the STDOUT which may help in testing. The sampled (moisture-)values are printed continuously. You can manipulate these values by connecting the sensor's spikes with your fingers, putting them into a glass of water or in you plant pot. Please also read the _Please note_ section.
 
 # Please note
 
