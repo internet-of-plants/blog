@@ -9,7 +9,7 @@ authors:
 
 ---
 
-One of the last pieces of the Watr.li puzzle was to measure the humidity of a plant's soil with one of our monitoring nodes. How we connected our humidity sensor to the SAM R21 and sampled its values is the topic of this post.
+One of the last pieces of the watr.li puzzle was to measure the humidity of a plant's soil with one of our monitoring nodes. How we connected our humidity sensor to the SAM R21 and sampled its values is the topic of this post.
 
 <!-- more -->
 
@@ -107,12 +107,11 @@ After calibrating the ADC, we can finally connect the sensor! As the sensor, we'
 
 <img src="images/sensing-moisture/sensor.png">
 
-Due to pin conflicts on the board, the STDOUT device needed to be changed from `UART_0` to `UART_1`. This prevented us from seeing the debug output from the board when the sensor was connected. Aa a result, we needed to employ an additional USB/UART converter to see the standard output from the board, which we connected as illustrated below:
+Unfortunately, the ADC conflicts with the default STDOUT device (`UART_0`) on the SAM R21 board, which is piped through the EDBG USB port. To be able to see the debug output from the RIOT application nonetheless, we had to change the output to `UART_1`. Since `UART_1` does not have a USB interface, we needed an additional USB/UART converter, which had to be connected as illustrated below:
 
 <img src="images/sensing-moisture/uart.png">
 
 Now that everything is set up and connected, we can finally get some humidity values by running the ADC test application once more!
 
-
-**Note:** When using the sensor in your plant pot, you should not set the soil under continuous voltage. Also you should not measure more often than "a couple of times" in an hour.
+**Note:** When using the sensor in your plant pot, you should not set the soil under continuous voltage as this might damage the plant. Also you should not measure more often than "a couple of times" in an hour.
 {: .alert .alert-warning }
