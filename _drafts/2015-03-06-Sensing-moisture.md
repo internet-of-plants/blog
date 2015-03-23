@@ -1,27 +1,15 @@
 ---
-
 layout: post
-title: Sensing the moisture of a plants soil
-subtitle: How to setup Atmel SAM R21, ADC and SEN0114
+title: Sensing the humidity of a plant's soil
+subtitle: Setting up the sensor with the SAM R21
 cover_image: covers/plant_pot_cropped.jpg
 authors:
 - peter
+- lucas
 
 ---
 
-# Prerequisite
-
-- You have the appropriate hardware
-    - Atmel board [SAM R21 Xplained Pro](http://www.atmel.com/Images/Atmel-42243-SAMR21-Xplained-Pro_User-Guide.pdf)
-    - 
-    - External USB/UART converter to see STDOUTs
-    - Some Jumper Cables
-- You have the appropriate software
-    - RIOT OS
-    - Pull request [Watrli plant node #4](https://github.com/watr-li/RIOT/pull/4)
-- You know how to build and flash software to the board like described in [this blogpost](http://watr.li/samr21-dev-setup-ubuntu.html)
-
-One of the last pieces of the Watr.li puzzle was to measure the humidity of a plant's soil with one of our monitoring nodes. How we connected our humidity sensor to the SAM R21 and sampled it's values is the topic of this post.
+One of the last pieces of the Watr.li puzzle was to measure the humidity of a plant's soil with one of our monitoring nodes. How we connected our humidity sensor to the SAM R21 and sampled its values is the topic of this post.
 
 <!-- more -->
 
@@ -36,22 +24,15 @@ Ideally, the correlation between sampled voltage and value is as shown in the fi
 
 <img src="images/sensing-moisture/calibration.png">
 
-(mention that this is the norm with cheap ADCs)
-In our case, however the value never dropped below a certain minimum and the maximum value of 4095 (i.e. 3.3V) was never reached, even when the sensor was submerged in water. To account for these inaccuracies inserted by the hardware, we needed to calibrate the ADC to the components being used.
+In our case, however the value never dropped below a certain minimum and the maximum value of 4095 (i.e. 3.3V) was never reached, even when the sensor was submerged in water. This is a common issue with cheap ADC components, which is why they include hardware capabilites to compensate these inaccuracies. This compensation has to be calibrated, though.
 
-Unfortunately, it is currently not possible to calibrate the ADC without modifying the RIOT source tree, so that is what we will have to do. The relevant settings are stored in the `boards/samd21-xpro/include/periph.conf` file. The values we will need to tweak are `SAMPLE_0_V_OFFSET` (the offset) and `SAMPLE_REF_V` (the gain). Do determine these values we will need to run the test application located at TODO TODO TODO. Flashing and running a RIOT application is explained in TODO TODO TODO.
-
-<!-- In case of inaccuries caused by the hardware, the sampled values can be corrected by the hardware. The correction BEZIEHT SICH AUF the offset value and the scaling. These values are set in the file "RIOT/boards/samd21-xpro/include/periph.conf" with the variables `SAMPLE_0_V_OFFSET` and `SAMPLE_REF_V`. To calibrate these values you need to know how to run the test application described in section _Running the test application_. -->
-
-<!-- note that for all work with the adc, the 3V3 reference voltage has to be connected to PA04 -->
+Unfortunately, it is currently not possible to calibrate the ADC without modifying the RIOT source tree, so that is what we will have to do. The relevant settings are stored in the `boards/samd21-xpro/include/periph_conf` file. The values we will need to tweak are `SAMPLE_0_V_OFFSET` (the offset) and `SAMPLE_REF_V` (the gain). Do determine these values we will need to run the ADC test application, as explained in the upcoming section.
 
 
 
 ## Running the test application
 
-
-
-The test application can be on GitHub. In any directory, first clone the [Watr.li RIOT fork](https://github.com/watr-li/RIOT) and check out the "watrli" branch and then get the adc_test node from the [Watr.li nodes repository](https://github.com/watr-li/nodes):
+The test application can be found on GitHub. In any directory, first clone the [Watr.li RIOT fork](https://github.com/watr-li/RIOT) and check out the "watrli" branch and then get the adc_test node from the [Watr.li nodes repository](https://github.com/watr-li/nodes):
 
     git clone https://github.com/watr-li/RIOT.git &&
         cd RIOT &&
@@ -60,9 +41,6 @@ The test application can be on GitHub. In any directory, first clone the [Watr.l
         https://github.com/watr-li/nodes.git &&
         cd nodes/adc_test &&
         BOARD=samr21-xpro make
-
-
-You need to build the test application in `RIOT/tests/plant_node` PETERS PR and flash it to the board as described in [this blogpost](http://watr.li/samr21-dev-setup-ubuntu.html). Connecting to a terminal will show you the STDOUT which may help in testing. The sampled (moisture-)values are printed continuously. You can manipulate these values by connecting the sensor's spikes with your fingers, putting them into a glass of water or in you plant pot. Please also read the _Please note_ section.
 
 
 ## Setting up the offset correction
@@ -115,7 +93,7 @@ We then remove the decimal point in the truncated binary representation and conv
     100100001010<sub>2</sub> = 2314<sub>10</sub>
 </p>
 
-This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter in our `periph.conf` to.
+This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter in our `periph_conf` to.
 
 * `SAMPLE_0_V_OFFSET = 90`
 * `SAMPLE_REF_V = 2314`
@@ -125,7 +103,7 @@ This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter
 
 # Final setup
 
-After calibrating the ADC, we can finally connect the sensor and get some humidity values! For the sensor, we've used a [SEN0114 Moisture Sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) from dfrobot, which is connected to the board as follows:
+After calibrating the ADC, we can finally connect the sensor! As the sensor, we've used a [SEN0114 Moisture Sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) from dfrobot, which is connected to the board as follows:
 
 <img src="images/sensing-moisture/sensor.png">
 
@@ -133,10 +111,8 @@ Due to pin conflicts on the board, the STDOUT device needed to be changed from `
 
 <img src="images/sensing-moisture/uart.png">
 
+Now that everything is set up and connected, we can finally get some humidity values by running the ADC test application once more!
 
 
-
-# Please note
-
-- When using the sensor in your plant pot, you should not set the soil under continuous voltage. Also you should not measure more often than "a couple of times" in an hour.
-- This test uses timers. Be aware that RIOT timers in the current master may crash after an hour or so!
+**Note:** When using the sensor in your plant pot, you should not set the soil under continuous voltage. Also you should not measure more often than "a couple of times" in an hour.
+{: .alert .alert-warning }
