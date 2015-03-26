@@ -24,7 +24,8 @@ The following packages are needed to build the necessary tools and the RIOT appl
 They can be installed through apt by running
 
     sudo apt-get install git pkg-config autoconf \
-        libudev-dev libusb-1.0-0-dev libtool unzip
+        libudev-dev libusb-1.0-0-dev libtool unzip \
+        valgrind
 
 In addition it is recommendable to update Ubuntu to the latest version after installing, by invoking
 
