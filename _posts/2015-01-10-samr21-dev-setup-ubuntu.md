@@ -80,7 +80,7 @@ The 64-bit version of the "[GNU Tools for ARM Embedded Processors](https://launc
     sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi &&
         sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded &&
         sudo apt-get update &&
-        sudo apt-get install gcc-arm-none-eabi=4.9.3.2014q4-0utopic12
+        sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q1-0utopic14
 {: .wide }
 
 **Note:** A warning could be displayed that there are conflicting package names with the Debian apt repositories. That warning is already taken into consideration here and you can safely proceed by pressing enter.
