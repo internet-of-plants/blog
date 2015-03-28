@@ -29,10 +29,32 @@ You can then ssh onto your VM and run all make, flash etc commands from your hos
 	ssh riot@ip.of.your.vm:/home/riot
 
 ## getting started with RIOT
-Let's get you started! The goal of this section is to show you how to build an flash a RIOT application. 
+Now that you're well-prepared, let's get you started! The goal of this section is to show you how to build and flash a RIOT application. 
 
 TODO: build & flash App (which one?)
 
 ## adding your own code
 
 Now that you're familiar with RIOT, it's time to add your own code. 
+
+
+
+### ``nick``: add shell command
+nick command!
+
+### ``say``: send chat msg
+
+bonus: sting concat
+
+### receive msgs
+
+### ``join``: change channels
+
+- each channel is a different endpoint
+- write *one* handler that outputs chat messages and a shell command that adds a new entry to endpoints[] that calls this handler for your new endpoint
+
+## Tips
+
+### If the board crashes, it will not tell you.
+
+### gdb
