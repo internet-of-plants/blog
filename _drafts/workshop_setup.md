@@ -35,12 +35,24 @@ TODO: build & flash App (which one?)
 
 ## adding your own code
 
-Now that you're familiar with RIOT, it's time to add your own code. 
+Now that you're familiar with RIOT, it's time to add your own code. At the end of this tutorial, you'll have built a distributed chat application which lets you communicate with the other workshop participants. All chat messages will be sent over CoAP, and the resource the CoAP messages are targeting determines the chat channel you're in.
 
+### ``nick``: add your own shell command
+RIOT has a rudimentary shell implementation which can be extended with your own commands. To do this, you'll have to extend the ``shell_commands[]`` array with your own ``shell_command_t``, which is defined as follows:
 
+    :c:
+    /**
+     * @brief           A single command in the list of the supported commands.
+     * @details         The list of commands is NULL terminated,
+     *                  i.e. the last element must be ``{ NULL, NULL, NULL }``.
+     */
+    typedef struct shell_command_t {
+        const char *name; /**< Name of the function */
+        const char *desc; /**< Description to print in the "help" command. */
+        shell_command_handler_t handler; /**< The callback function. */
+    } shell_command_t;
 
-### ``nick``: add shell command
-nick command!
+For your first step towards chatting with RIOT, write a function that lets you set your nickname. Then, add a ``shell_command_t`` which lets you call this function from your RIOT shell with the command ``nick <nickname>``.
 
 ### ``say``: send chat msg
 
