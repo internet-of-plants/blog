@@ -1,3 +1,10 @@
+---
+layout: post
+title: Workshop Guide
+author: lotte
+date: 2015-01-29
+---
+
 # Workshop Setup
 
 ## prerequisites
