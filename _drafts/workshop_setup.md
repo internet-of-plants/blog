@@ -65,10 +65,10 @@ Re-build your application with ``make`` and try your new shell command by execut
 
 
 ### ``say``: send chat messages
-**Goal:** Create a shell command ``send <message>`` which sends a chat message. The message should be in the payload of a CoAP PUT request directed at the resource ``chat/default/``.{: .alert .alert-info }
+**Goal:** Create a shell command ``say <message>`` which sends a chat message. The message should be in the payload of a CoAP PUT request directed at the resource ``chat/default/``.{: .alert .alert-info }
 
 Now that you can set your nick name, let's send some chat messages!
-Again, we'll need to add a ``send <message>`` command to the shell. 
+Again, we'll need to add a ``say <message>`` command to the shell. 
 Each message should be wrapped into a CoAP PUT request. CoAP requests are– just like HTTP requests– directed at a *resource*. The default resource for our messages is ``chat/default/``.
 In microcoap, resources are represented by the following struct:
 
@@ -91,7 +91,12 @@ Now, you can use ``chat_udp_send()`` to send the content of ``buf``.
 
 If you want to send messages wich contain spaces, the shell will recognize each word as a single argument, so you can have different values for ``argc`` and ``argv``. Bonus points for concatenating them!{: .alert .alert-info }
 
-### receive msgs
+### receive messages
+**Goal:** Receive CoAP chat messages, parse and output them.{: .alert .alert-info }
+
+The base application contains a ``chat_udp_server_loop()`` which receives plain UDP mssages. However, our chat messages aren't plain text anymore, they're CoAP packets now. So instead of just printing the contents of ``buffer_main``, you'll need to handle these packets properly.
+
+TODO shorten http://watr.li/microcoap-and-ff-copper.html and add 
 
 ### ``join``: change channels
 
