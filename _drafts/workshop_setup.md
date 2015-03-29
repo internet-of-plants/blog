@@ -31,13 +31,18 @@ You can then ssh onto your VM and run all make, flash etc commands from your hos
 ## getting started with RIOT
 Now that you're well-prepared, let's get you started! The goal of this section is to show you how to build and flash a RIOT application. 
 
-TODO: build & flash App (which one?)
+TODO: 
+- build app
+- runin native (TODO: libc6-dev-i386 installed on VM?)
+- flash App (which one?) 
 
 ## adding your own code
 
 Now that you're familiar with RIOT, it's time to add your own code. At the end of this tutorial, you'll have built a distributed chat application which lets you communicate with the other workshop participants. All chat messages will be sent over CoAP, and the resource the CoAP messages are targeting determines the chat channel you're in.
 
 ### ``nick``: add your own shell command
+**Goal:** Create a shell command ``nick <nickname>`` which lets you set your nickname. {: .alert .alert-info }
+
 RIOT has a rudimentary shell implementation which can be extended with your own commands. To do this, you'll have to extend the ``shell_commands[]`` array with your own ``shell_command_t``, which is defined as follows:
 
     :c:
@@ -54,9 +59,37 @@ RIOT has a rudimentary shell implementation which can be extended with your own 
 
 For your first step towards chatting with RIOT, write a function that lets you set your nickname. Then, add a ``shell_command_t`` which lets you call this function from your RIOT shell with the command ``nick <nickname>``.
 
-### ``say``: send chat msg
+Re-build your application with ``make`` and try your new shell command by executing the binary:
 
-bonus: sting concat
+	sudo ./bin/native/chat.elf tap0
+
+
+### ``say``: send chat messages
+**Goal:** Create a shell command ``send <message>`` which sends a chat message. The message should be in the payload of a CoAP PUT request directed at the resource ``chat/default/``.{: .alert .alert-info }
+
+Now that you can set your nick name, let's send some chat messages!
+Again, we'll need to add a ``send <message>`` command to the shell. 
+Each message should be wrapped into a CoAP PUT request. CoAP requests are– just like HTTP requests– directed at a *resource*. The default resource for our messages is ``chat/default/``.
+In microcoap, resources are represented by the following struct:
+
+	:c:
+	typedef struct
+    {
+        int count;
+        const char *elems[MAX_SEGMENTS];
+    } coap_endpoint_path_t;
+
+Each element of ``coap_endpoint_path_t.elems`` should be one segment of the path, like so:
+
+	coap_endpoint_path_t chat_path = {2, {"chat", "default"}};
+
+
+Once you've set your path, you can use ``int coap_ext_build_PUT(uint8_t *buf, size_t *buflen, char *payload, coap_endpoint_path_t *path)`` to build your put request.  
+Now, you can use ``chat_udp_send()`` to send the content of ``buf``.
+
+(For the sake of simplicity, all messages are sent to the link-local all nodes multicast address by ``chat_udp_send()``.)
+
+If you want to send messages wich contain spaces, the shell will recognize each word as a single argument, so you can have different values for ``argc`` and ``argv``. Bonus points for concatenating them!{: .alert .alert-info }
 
 ### receive msgs
 
