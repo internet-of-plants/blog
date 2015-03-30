@@ -65,7 +65,7 @@ Re-build your application with ``make`` and try your new shell command by execut
 
 
 ### ``say``: send chat messages
-**Goal:** Create a shell command ``say <message>`` which sends a chat message. The message should be in the payload of a CoAP PUT request directed at the resource ``chat/default/``.{: .alert .alert-info }
+**Goal:** Create a shell command ``say <message>`` which sends a chat message. The message should be in the payload of a CoAP PUT request directed at the resource ``chat/default/``. The message should be prepended with your nick. {: .alert .alert-info }
 
 Now that you can set your nick name, let's send some chat messages!
 Again, we'll need to add a ``say <message>`` command to the shell. 
@@ -83,8 +83,11 @@ Each element of ``coap_endpoint_path_t.elems`` should be one segment of the path
 
 	coap_endpoint_path_t chat_path = {2, {"chat", "default"}};
 
+The payload of the PUT request is our chat message. In order to make it identifiable, make sure to prepend it with your nickname, like so:
 
-Once you've set your path, you can use ``int coap_ext_build_PUT(uint8_t *buf, size_t *buflen, char *payload, coap_endpoint_path_t *path)`` to build your put request.  
+	"my_nick: hello"
+
+Once you've created your payload, you can use ``int coap_ext_build_PUT(uint8_t *buf, size_t *buflen, char *payload, coap_endpoint_path_t *path)`` to build your put request.  
 Now, you can use ``chat_udp_send()`` to send the content of ``buf``.
 
 (For the sake of simplicity, all messages are sent to the link-local all nodes multicast address by ``chat_udp_send()``.)
@@ -99,9 +102,11 @@ The base application contains a ``chat_udp_server_loop()`` which receives plain 
 TODO shorten http://watr.li/microcoap-and-ff-copper.html and add 
 
 ### ``join``: change channels
+**Goal:** Create ``join <channel name>`` command that changes the second segment of our resource path. Send chat messages to resources other than ``chat/default``{: .alert .alert-info }  
 
-- each channel is a different endpoint
-- write *one* handler that outputs chat messages and a shell command that adds a new entry to endpoints[] that calls this handler for your new endpoint
+Many chat applications have topic-specific channels. Our chat application can do this too: Up until now, we've all been sending our messages to ``chat/default/``. But when we change the resource to, say, ``chat/IoT/``, we can create a new channel on the fly (to discuss all things IoT, for example).
+
+- TODO: write *one* handler that outputs chat messages and a shell command that adds a new entry to endpoints[] that calls this handler for your new endpoint
 
 ## Tips
 
