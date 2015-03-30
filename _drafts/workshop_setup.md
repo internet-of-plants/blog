@@ -28,13 +28,70 @@ You can then ssh onto your VM and run all make, flash etc commands from your hos
 
 	ssh riot@ip.of.your.vm:/home/riot
 
-## getting started with RIOT
+## Getting started with RIOT
 Now that you're well-prepared, let's get you started! The goal of this section is to show you how to build and flash a RIOT application. 
 
-TODO: 
-- build app
-- runin native (TODO: libc6-dev-i386 installed on VM?)
-- flash App (which one?) 
+### Building a RIOT app
+
+	TODO: fetch (special) RIOT repo
+	TODO: fetch base app
+	cd TODO
+	make
+
+### Running it in native mode
+You can run and test an application on your own computer with the ``native`` mode. The network is emulated through tun/tap devices which are connected through a tapbridge. This bridge has to be created beforehand:
+
+	RIOT/cpu/native/tapsetup.sh create
+	
+Now you can start your RIOT application. When doing so, you'll need to specify which tap device it should listen on:
+
+	sudo ./bin/native/TODO.elf tap0
+
+In a new terminal, start another RIOT, this time listening on ``tap1``:
+
+	sudo ./bin/native/TODO.elf tap1
+
+Type help to see all commands available in the RIOT shell.
+Use the ``say`` command in one RIOT shell to send a string to the other. If it arrives, you're ready to go!
+
+### Flashing it to the SAMR21
+Attach your SAMR21 board via microUSB and make 
+You'll need two terminals for this: one for flashing and one to view the debug output.  
+
+### Setting up the output terminal
+
+In this terminal we start a [pyterm](http://pyterm.sourceforge.net/) instance, a serial port terminal emulator written in Python, listening to the output of the board:
+
+    :bash:
+    export BOARD=samr21-xpro &&
+        make term
+
+This should result in the following being printed, after which pyterm waits for output from the board:
+
+    INFO # Connect to serial port /dev/ttyACM0
+    Welcome to pyterm!
+    Type '/exit' to exit.
+
+
+### Running the flash command
+
+Now we can switch to the other terminal window in which we will invoke the commands to flash the application onto the board:
+
+    :bash:
+    export BOARD=samr21-xpro &&
+        make flash
+
+The CMSIS-DAP interface for flashing and debugging [is quite slow](http://sourceforge.net/p/openocd/mailman/message/32496519/) (should be around 2KiB/s). So when flashing, you might need to wait a little longer. You can also apply an [OpenOCD patch](http://openocd.zylin.com/#/c/2356/) that increases flashing speed by 50-100%.
+{: .alert .alert-warning }
+
+`make flash` flashes and subsequently resets the board, causing the application to run. For our hello world example it should result in the following output being shown in the terminal window in which `make term` was executed:
+
+    INFO # kernel_init(): This is RIOT! (Version: 2014.12-285-gfe295)
+    INFO # kernel_init(): jumping into first task...
+    INFO # Hello World!
+    INFO # You are running RIOT on a(n) samr21-xpro board.
+    INFO # This board features a(n) samd21 MCU.
+{: .wide }
 
 ## adding your own code
 
