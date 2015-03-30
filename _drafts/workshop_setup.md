@@ -58,7 +58,7 @@ Use the ``say`` command in one RIOT shell to send a string to the other. If it a
 Attach your SAMR21 board via microUSB and make 
 You'll need two terminals for this: one for flashing and one to view the debug output.  
 
-### Setting up the output terminal
+#### Setting up the output terminal
 
 In this terminal we start a [pyterm](http://pyterm.sourceforge.net/) instance, a serial port terminal emulator written in Python, listening to the output of the board:
 
@@ -73,7 +73,7 @@ This should result in the following being printed, after which pyterm waits for 
     Type '/exit' to exit.
 
 
-### Running the flash command
+#### Running the flash command
 
 Now we can switch to the other terminal window in which we will invoke the commands to flash the application onto the board:
 
