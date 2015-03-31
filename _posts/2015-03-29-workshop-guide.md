@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Workshop Guide
+hidden: true
 author: lotte
 date: 2015-01-29
 ---
