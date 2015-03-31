@@ -188,6 +188,34 @@ If you want to send messages wich contain spaces, the shell will recognize each 
 
 The base application contains a ``chat_udp_server_loop()`` which receives plain UDP mssages. However, our chat messages aren't plain text anymore, they're CoAP packets now. So instead of just printing the contents of ``buffer_main``, you'll need to handle these packets properly. We'll be doing this with microcoap too.
 
+For a more detailed explanation of microcoap servers, please visit [this page.](http://watr.li/microcoap-and-ff-copper.html){: .alert .alert-info }
+
+First, you'll need to specify an endpoint which specifies for which combinations of request method and resource path a certain callback function should be called. Endpoints are defined as follows:
+
+	:c:
+	typedef struct
+	{
+    	coap_method_t method;
+    	coap_endpoint_func handler;
+    	const coap_endpoint_path_t *path;
+    	const char *core_attr;
+	} coap_endpoint_t;
+
+All endpoints need to be stored in an array which **must** be called ``endpoints`` and end with a NULL'ed script. It should look something like this:
+
+	:c:
+	const coap_endpoint_t endpoints[] =
+	{
+    	{COAP_METHOD_GET, handle_get_response, &path, "ct=0"},
+    	{(coap_method_t)0, NULL, NULL, NULL} /* marks the end of 
+        	                                  * the endpoints array */
+	};
+
+But keep in mind that we're expecting to handle a ``PUT`` request! ;)   
+Now you can implement the callback function handling the CoAP packet (which is called ``handle_get_response`` in the above).   
+After doing that, you'll need to teach ``chat_udp_server_loop`` how to understand CoAP messages:
+
+	:c:
     if (0 != (rc = coap_parse(&pkt, buf, n)))
         printf("Bad packet rc=%d\n", rc);
 
