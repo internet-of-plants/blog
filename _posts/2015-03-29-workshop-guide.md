@@ -56,7 +56,7 @@ Now that we have checked out the RIOT repository, we can fetch some example appl
 
     git clone https://github.com/watr-li/applications.git &&
     cd applications &&
-    git checkout workshop
+    git checkout master
 {: .wide }
 
 Now we're inside the `applications/` folder and we can try to build our first application, the `chat`:
