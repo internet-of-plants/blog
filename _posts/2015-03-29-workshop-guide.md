@@ -211,6 +211,7 @@ All endpoints need to be stored in an array which **must** be called ``endpoints
     	{(coap_method_t)0, NULL, NULL, NULL} /* marks the end of 
         	                                  * the endpoints array */
 	};
+{: .wide }
 
 But keep in mind that we're expecting to handle a ``PUT`` request! ;)   
 Now you can implement the callback function handling the CoAP packet (which is called ``handle_get_response`` in the above).   
