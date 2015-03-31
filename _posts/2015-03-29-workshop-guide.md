@@ -5,61 +5,82 @@ author: lotte
 date: 2015-01-29
 ---
 
-# Workshop Setup
 
-## prerequisites
-This guide assumes that you are familiar with the basics of the following:
+# Grenoble RIOT Workshop Guide
 
-- using a linux terminal
-- the C programming language
+For the workshop we will assume that you are familiar with the basics of the following:
 
-However, first and foremost, we're here to learn and help each other. You don't have to know all the things in order to be able to participate. If you're unsure about anything, or feel that you'd like some help, please do not hesitate to ask the RIOT team. We know that it may be a lot to grasp at once, and we're happy to answer all questions, no matter how trivial they may seem to someone.
+- Using a linux terminal
+- The C programming language
 
-## development environment
-RIOT requires you to install and, in one case, even compile some dependencies. We've prepared a Virtual Machine which is all set up and ready to go. You can find it [here](http://TODO), along with a binary of a VMWare test version in case you might need it.  
-username: **riot**  
-password: **riot**
+However, first and foremost, we're here to learn and help each other. You don't have to know everything in order to be able to participate. If you're unsure about anything, or feel that you'd like some help, please do not hesitate to ask the RIOT team. We know that it may be a lot to grasp at once, and we're happy to answer all questions, no matter how trivial they may seem.
+
+
+# Development environment
+
+RIOT requires you to install and compile some dependencies. We've prepared a VMware Virtual Machine which is all set up and ready to go. We will distribute said virtual machine via USB sticks at the beginning of the workshop. To use it, you will need to have VMware installed on your system. Trials are available at [vmware.com](https://my.vmware.com/web/vmware/downloads).
 
 In case you prefer to set everyting up yourself, you can follow [this guide](http://watr.li/samr21-dev-setup-ubuntu.html) up until (but not including) the section “Building a RIOT example application”.
 
 RIOT does have experimental Windows support. If you'd prefer to use Windows as your host system, you can consult [this guide](https://github.com/RIOT-OS/RIOT/wiki/Build-RIOT-on-Windows-OS), but it doesn't cover how to flash an application. However, a word of warning: you probably know much more about your Windows machine than we do, and we might not be able to help you in case you run into trouble.
 
-### tip: ssh & sshfs for your VM
+
+## Tip: SSH & sshfs for your VM
+
 While our VM has a GUI, this can be annoyingly slow. Alternatively, you can use sshfs to mount your VM's home directory as if it were a regular directory on your host system:
 
-	sshfs riot@ip.of.your.vm:/home/riot some_directory/
+    sshfs riot@ip.of.your.vm:/home/riot some_directory/
 
 (get your VM's IP by launching the Terminal application and entering ``ifconfig eth0``)
 
 You can then ssh onto your VM and run all make, flash etc commands from your host system's terminal:
 
-	ssh riot@ip.of.your.vm:/home/riot
+    ssh riot@ip.of.your.vm:/home/riot
 
-## Getting started with RIOT
+
+# Getting started with RIOT
+
 Now that you're well-prepared, let's get you started! The goal of this section is to show you how to build and flash a RIOT application. 
 
-### Building a RIOT app
+## Building a RIOT app
 
-	TODO: fetch (special) RIOT repo
-	TODO: fetch base app
-	cd TODO
-	make
+Checking out the RIOT repository work like follows. We've used a fork of the main RIOT repository to work around a memory issue on the SAM R21 that has not yet been merged to the RIOT master.
 
-### Running it in native mode
+    git clone https://github.com/watr-li/RIOT.git &&
+        cd RIOT &&
+        git checkout workshop &&
+        cd ..
+
+Now that we have checked out the RIOT repository, we can fetch some example applications:
+
+    git clone https://github.com/watr-li/applications.git &&
+    cd application &&
+    git checkout workshop
+
+Now we're inside the `applications/` folder and we can try to build our first application, the `chat`:
+
+    cd chat &&
+        make all
+
+
+## Running it in native mode
+
 You can run and test an application on your own computer with the ``native`` mode. The network is emulated through tun/tap devices which are connected through a tapbridge. This bridge has to be created beforehand:
 
-	RIOT/cpu/native/tapsetup.sh create
-	
-Now you can start your RIOT application. When doing so, you'll need to specify which tap device it should listen on:
+    RIOT/cpu/native/tapsetup.sh create
+    
+Now you can start your RIOT application in native mode:
 
-	sudo ./bin/native/TODO.elf tap0
+    make term
 
 In a new terminal, start another RIOT, this time listening on ``tap1``:
 
-	sudo ./bin/native/TODO.elf tap1
+    PORT=tap1 make term
+
+(Note that `make term` only works if you've previously built your application. For non-native mode it will try to open up a serial connection to the hardware.)
 
 Type help to see all commands available in the RIOT shell.
-Use the ``say`` command in one RIOT shell to send a string to the other. If it arrives, you're ready to go!
+Use the ``say`` command in one RIOT shell to send a string to the other RIOT instance. If it arrives, you're ready to go!
 
 ### Flashing it to the SAMR21
 Attach your SAMR21 board via microUSB and make 
@@ -125,7 +146,7 @@ For your first step towards chatting with RIOT, write a function that lets you s
 
 Re-build your application with ``make`` and try your new shell command by executing the binary:
 
-	sudo ./bin/native/chat.elf tap0
+    sudo ./bin/native/chat.elf tap0
 
 
 ### ``say``: send chat messages
@@ -136,8 +157,8 @@ Again, we'll need to add a ``say <message>`` command to the shell.
 Each message should be wrapped into a CoAP PUT request. CoAP requests are– just like HTTP requests– directed at a *resource*. The default resource for our messages is ``chat/default/``.
 In microcoap, resources are represented by the following struct:
 
-	:c:
-	typedef struct
+    :c:
+    typedef struct
     {
         int count;
         const char *elems[MAX_SEGMENTS];
@@ -145,11 +166,11 @@ In microcoap, resources are represented by the following struct:
 
 Each element of ``coap_endpoint_path_t.elems`` should be one segment of the path, like so:
 
-	coap_endpoint_path_t chat_path = {2, {"chat", "default"}};
+    coap_endpoint_path_t chat_path = {2, {"chat", "default"}};
 
 The payload of the PUT request is our chat message. In order to make it identifiable, make sure to prepend it with your nickname, like so:
 
-	"my_nick: hello"
+    "my_nick: hello"
 
 Once you've created your payload, you can use ``int coap_ext_build_PUT(uint8_t *buf, size_t *buflen, char *payload, coap_endpoint_path_t *path)`` to build your put request.  
 Now, you can use ``chat_udp_send()`` to send the content of ``buf``.
