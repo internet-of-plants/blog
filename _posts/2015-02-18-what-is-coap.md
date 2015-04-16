@@ -79,7 +79,7 @@ When interacting with a CoAP resource, one of four "request methods" must be spe
             <td>PUT</td>
             <td><small>Indicates that the target resource should be created or updated.</small></td>
             <td class="text-center">𝗫</td>
-            <td class="text-center">𝗫</td>
+            <td class="text-center">✓</td>
             <td class="text-center">✓</td>
             <td><small>2.01&nbsp;Created, 2.04&nbsp;Changed</small></td>
         </tr>
