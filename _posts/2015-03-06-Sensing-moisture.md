@@ -36,7 +36,7 @@ Additionally, the ADC conflicts with the default STDOUT device (`UART_0`) on the
 This switch to a nonstandard output device means RIOTs ``make term`` doesn't listen on the right device anymore. This is why, instead of using ``make term``, you'll have to start pyterm like this:
 
     <path to your RIOT directory>/tools/pyterm/pyterm -p "/dev/ttyUSB0"
-
+{: .wide }
 
 ## Running the test application
 
