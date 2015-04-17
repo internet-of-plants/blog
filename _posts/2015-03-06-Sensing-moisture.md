@@ -29,7 +29,11 @@ In our case, however the value never dropped below a certain minimum and the max
 
 Unfortunately, it is currently not possible to calibrate the ADC without modifying the RIOT source tree, so that is what we will have to do. The relevant settings are stored in the `boards/samd21-xpro/include/periph_conf` file. The values we will need to tweak are `SAMPLE_0_V_OFFSET` (the offset) and `SAMPLE_REF_V` (the gain). Do determine these values we will need to run the ADC test application, as explained in the upcoming section.
 
+Additionally, the ADC conflicts with the default STDOUT device (`UART_0`) on the SAM R21 board, which is piped through the EDBG USB port. To be able to see the debug output from the RIOT application nonetheless, we have to change the output to `UART_1`. Since `UART_1` does not have a USB interface, we'll needed an additional USB/UART converter, which had to be connected as illustrated below:
 
+<img src="images/sensing-moisture/uart.png">
+
+TODO: -connect to pc and adjust pyterm
 
 ## Running the test application
 
@@ -107,10 +111,6 @@ This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter
 After calibrating the ADC, we can finally connect the sensor! As the sensor, we've used a [SEN0114 Moisture Sensor](http://www.dfrobot.com/index.php?route=product/product&product_id=599) from dfrobot, which is connected to the board as follows:
 
 <img src="images/sensing-moisture/sensor.png">
-
-Unfortunately, the ADC conflicts with the default STDOUT device (`UART_0`) on the SAM R21 board, which is piped through the EDBG USB port. To be able to see the debug output from the RIOT application nonetheless, we had to change the output to `UART_1`. Since `UART_1` does not have a USB interface, we needed an additional USB/UART converter, which had to be connected as illustrated below:
-
-<img src="images/sensing-moisture/uart.png">
 
 Now that everything is set up and connected, we can finally get some humidity values by running the ADC test application once more!
 
