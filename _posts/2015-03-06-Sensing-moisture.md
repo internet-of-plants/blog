@@ -33,7 +33,10 @@ Additionally, the ADC conflicts with the default STDOUT device (`UART_0`) on the
 
 <img src="images/sensing-moisture/uart.png">
 
-TODO: -connect to pc and adjust pyterm
+This switch to a nonstandard output device means RIOTs ``make term`` doesn't listen on the right device anymore. This is why, instead of using ``make term``, you'll have to start pyterm like this:
+
+    <path to your RIOT directory>/tools/pyterm/pyterm -p "/dev/ttyUSB0"
+
 
 ## Running the test application
 
@@ -102,8 +105,6 @@ This resulting value is the one that we want to set the `SAMPLE_REF_V` parameter
 
 * `SAMPLE_0_V_OFFSET = 90`
 * `SAMPLE_REF_V = 2314`
-
-
 
 
 # Final setup
