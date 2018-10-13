@@ -27,7 +27,7 @@ layout: base
 
 <article class="container">
 {% for post in paginator.posts %}
-  {% unless post.draft || post.hidden %}
+  {% unless post.draft or post.hidden %}
     <section class="index">
 
         <img src="/images/{{ post.author.image }}" class="avatar">
