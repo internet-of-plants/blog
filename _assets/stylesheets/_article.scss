@@ -191,27 +191,31 @@ article {
         }
     }
 
+    pre.highlight {
+        background: rgba(197,192,190, 0.3);
+    }
+
     pre {
         border: 0;
-        padding: 1.5em 2em;
+        padding: 0.9em 1.5em;
         margin:0 0 1.5em;
-        background: rgba(197,192,190, 0.3);
+
         border: 0;
         border-radius: 5px;
         border-bottom:1px solid #eee;
         width:100%;
-        font-size:0.8em;
+        font-size:1em;
         overflow-x: auto;
         display:block;
 
         code {
             font-size:0.8em;
             border:0;
+            white-space: pre-wrap;
         }
     }
 
-    .highlight.wide pre,
-    table.wide {
+    .wide pre.highlight {
         width: 125%;
         margin-left: -12.5%;
         max-width: 125%;

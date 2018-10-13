@@ -31,7 +31,7 @@ To create a new Play application based on the Java template, run the following i
 
     activator new play-californium play-java
 
-This will create a new directory `play-californium` in the current directory, to which we can switch and execute `./activator run`. This will start a webserver at port 9000, so navigating to `http://localhost:9000` should display the Play welcome message. 
+This will create a new directory `play-californium` in the current directory, to which we can switch and execute `./activator run`. This will start a webserver at port 9000, so navigating to `http://localhost:9000` should display the Play welcome message.
 
 **Note:** Play automatically detects changes in the project directory after each request to the webserver, so it is not necessary to restart it after source code changes.
 {: .alert .alert-info }
@@ -41,7 +41,9 @@ This will create a new directory `play-californium` in the current directory, to
 
 Now that we have a very basic Play application set up we want to add Californium as a dependency. To do this, we include the following line in the `build.sbt` file within the project's root directory:
 
-    libraryDependencies += "org.eclipse.californium" % "californium-core" % "1.0.0-M3" 
+~~~groovy
+libraryDependencies += "org.eclipse.californium" % "californium-core" % "1.0.0-M3"
+~~~
 
 **Note:** The above statement has to be surrounded by newlines or an error will be thrown. This is a convention of the Scala Build Tool (SBT) which is used by Play.
 {: .alert .alert-warning }
@@ -57,96 +59,101 @@ Background jobs in Play are executed through so-called "Actors", which are light
 
 Actors in Play (which uses the Akka framework) have a single abstract method `void receive(Object message)` that needs to be implemented and is invoked whenever the actor receives a message. The following code is shortened for better readability of the article. Please refer to [GitHub](https://github.com/watr-li/play-californium/blob/master/app/actors/CaliforniumServerActor.java) for the full source:
 
-    :java:
-    package actors;
-    [...]
-    public class CaliforniumServerActor extends UntypedActor {
-      LoggingAdapter log = Logging.getLogger(getContext().system(), this);
-      CaliforniumServer server;
-      [...]
-    }
+~~~java
+package actors;
+[...]
+public class CaliforniumServerActor extends UntypedActor {
+  LoggingAdapter log = Logging.getLogger(getContext().system(), this);
+  CaliforniumServer server;
+  [...]
+~~~
+{: .wide }
 
 There are several types of actors, but we will be working with the simplest, the `UntypedActor`. The `server` variable will hold a reference to the instantiated Californium server, which is initialized in the constructor. The implementation of said server is presented in the next section.
 
-    :java:
-    public CaliforniumServerActor() {
-      super();
-      server = CaliforniumServer.initialize(getSelf());
-    }
+~~~java
+public CaliforniumServerActor() {
+  super();
+  server = CaliforniumServer.initialize(getSelf());
+}
+~~~
 
 Here we pass a reference to the actor, obtained by calling `getSelf` and of type `ActorRef`, as a parameter to the Californium initialization routine. We do this so that the Californium server will be able to send messages to the Californium actor and thus to the Play application.
 
 Now that the server is initialized, only the `onReceive` method remains to be implemented. This method defines which types of messages an actor can react to. The message is passed as an `Object` parameter, so it is possible to simply send strings as messages to the actor. It is preferable to send Java objects though, since these can be extended with additional data attributes when necessary. For example, for our server actor we will implement two messages, `CoapMessageReceived` and `ShutdownActor`. These messages are simple Java objects which store data to be transmitted in the message. The implementation for our two messages looks like this:
 
-    :java:
-    // app/actors/messages/CoapMessageReceived.java
-    package actors.messages;
-    public class CoapMessageReceived {
-      private String message;
-    
-      public CoapMessageReceived(String message) {
-        this.message = message;
-      } 
+~~~java
+// app/actors/messages/CoapMessageReceived.java
+package actors.messages;
+public class CoapMessageReceived {
+  private String message;
 
-      public String getMessage() {
-        return message;
-      }
-    }
+  public CoapMessageReceived(String message) {
+    this.message = message;
+  }
 
-    // app/actors/messages/ShutdownActor.java
-    package actors.messages;
-    public class ShutdownActor {}
+  public String getMessage() {
+    return message;
+  }
+}
+
+// app/actors/messages/ShutdownActor.java
+package actors.messages;
+public class ShutdownActor {}
+~~~
 
 In our `onReceive` method we can now check which type of message we have received using `instanceof`. If the received message contains actual data we can then cast it to the correct type and call the defined getter methods, like so:
-    
-    :java:
-    public void onReceive(Object message) throws Exception {
 
-      if(message instanceof CoapMessageReceived) {
-        CoapMessageReceived msg = (CoapMessageReceived) message;
-        log.info("Received a message via CoAP: {}", msg.getMessage());
+~~~java
+public void onReceive(Object message) throws Exception {
 
-      } else if(message instanceof ShutdownActor) {
-        log.info("Graceful shutdown");
-        server.stop();
-        getSelf().tell(akka.actor.PoisonPill.getInstance(), getSelf());
+  if(message instanceof CoapMessageReceived) {
+    CoapMessageReceived msg = (CoapMessageReceived) message;
+    log.info("Received a message via CoAP: {}", msg.getMessage());
 
-      } else {
-        log.info("Unhandled message: {}", message);
-        unhandled(message);
-      }
-    }
+  } else if(message instanceof ShutdownActor) {
+    log.info("Graceful shutdown");
+    server.stop();
+    getSelf().tell(akka.actor.PoisonPill.getInstance(), getSelf());
+
+  } else {
+    log.info("Unhandled message: {}", message);
+    unhandled(message);
+  }
+}
+~~~
 {: .wide }
 
 One thing to note is the `ShutdownActor` case. In it, we first call `server.stop()` to shutdown the Californium server. In the following line we send a `PoisonPill` message to the current actor. This is a message provided by the Akka actor framework which instructs the actor to process all messages remaining in its inbox and then shut itself down.
 
 
 
-## Starting the actor 
+## Starting the actor
 
 Now that we've created our actor we need to initialize it when the Play application starts. This is done by defining a [Global object](https://www.playframework.com/documentation/2.3.x/ScalaGlobal) which handles global settings and startup routines in Play. For that, we create a `Global.java` inside the `app/global/` directory (which we have to create), adding the following content:
 
-    :java:
-    package global;
-    [...]
-    public class Global extends GlobalSettings {
+~~~java
+package global;
+[...]
+public class Global extends GlobalSettings {
 
-        private static ActorRef californiumActor;
+    private static ActorRef californiumActor;
 
-        public void onStart(Application app) {
-          californiumActor = Akka.system().actorOf(
-            Props.create(CaliforniumServerActor.class)
-          );
-        }
-
-        public void onStop(Application app) {
-          californiumActor.tell(new ShutdownActor(), null);
-        }
-
-        public static ActorRef getCaliforniumActor() {
-          return californiumActor;
-        }
+    public void onStart(Application app) {
+      californiumActor = Akka.system().actorOf(
+        Props.create(CaliforniumServerActor.class)
+      );
     }
+
+    public void onStop(Application app) {
+      californiumActor.tell(new ShutdownActor(), null);
+    }
+
+    public static ActorRef getCaliforniumActor() {
+      return californiumActor;
+    }
+}
+~~~
 {: .wide }
 
 In the `onStart` method we create an instance of our Californium Server Actor and store the reference for later access. In `onStop` we send it a `ShutdownActor` message to gracefully shutdown the Californium server as well as itself. For a more in-depth explanation of how the Play integration of Akka works please refer to the [Play documentation](https://www.playframework.com/documentation/2.3.x/JavaAkka).
@@ -162,60 +169,64 @@ For this guide we have slightly modified the official [Californium Hello World S
 
 Just as in the Hello World example, our server class inherits from `CoapServer`:
 
-    :java:
-    // app/californium/CaliforniumServer.java
-    public class CaliforniumServer extends CoapServer {
-        ActorRef serverActor;
-        [...]
-    }
+~~~java
+// app/californium/CaliforniumServer.java
+public class CaliforniumServer extends CoapServer {
+    ActorRef serverActor;
+    [...]
+}
+~~~
 
 Instead of a static `main(String[] args)` method we use a static method that initializes the server, passing a reference to our server actor from the previous section, and returning the resulting instance:
 
-    :java:
-    public static CaliforniumServer initialize(ActorRef serverActor) {
-      CaliforniumServer server = null;
-      try {
-        server = new CaliforniumServer(serverActor);
-        server.start();
-      } catch (SocketException e) {
-        logger.error("Failed to initialize server: " + e.getMessage());
-      }
-      return server;
-    }
+~~~java
+public static CaliforniumServer initialize(ActorRef serverActor) {
+  CaliforniumServer server = null;
+  try {
+    server = new CaliforniumServer(serverActor);
+    server.start();
+  } catch (SocketException e) {
+    logger.error("Failed to initialize server: " + e.getMessage());
+  }
+  return server;
+}
+~~~
 {: .wide }
 
 Then comes the constructor which registers our example CoAP resource and stores the reference to the server actor so that we can later send messages to it:
-        
-    :java:
-    public CaliforniumServer(ActorRef serverActor)
-      throws SocketException {
 
-      this.serverActor = serverActor;
-      add(new HelloWorldResource());
-    }
+~~~java
+public CaliforniumServer(ActorRef serverActor)
+  throws SocketException {
+
+  this.serverActor = serverActor;
+  add(new HelloWorldResource());
+}
+~~~
 {: .wide }
 
 Lastly we define said resource as an inner class of the `CaliforniumServer`. The constructor of the `CoapResource` takes the resource name as a parameter, which in this case is `helloWorld`.
 
 In order to send messages to the resource we still need to define a handler for one of the CoAP methods (GET, POST, PUT and DELETE). We don't use GET (as the Californium HelloWorld example does) because {% postlink 2015-02-18-what-is-coap it cannot have a payload %}.
 
-    :java:
-    class HelloWorldResource extends CoapResource {
+~~~java
+class HelloWorldResource extends CoapResource {
 
-      public HelloWorldResource() {
-        super("helloWorld");
-        getAttributes().setTitle("Hello-World Resource");
-      }
+  public HelloWorldResource() {
+    super("helloWorld");
+    getAttributes().setTitle("Hello-World Resource");
+  }
 
-      public void handlePUT(CoapExchange exchange) {
-        serverActor.tell(
-          new CoapMessageReceived(exchange.getRequestText()), null);
-        exchange.respond(ResponseCode.CHANGED);
-      }
-    }
+  public void handlePUT(CoapExchange exchange) {
+    serverActor.tell(
+      new CoapMessageReceived(exchange.getRequestText()), null);
+    exchange.respond(ResponseCode.CHANGED);
+  }
+}
+~~~
 {: .wide }
 
-In the `handlePUT` method we notify the server actor that a message has been received through a `CoapMessageReceived` instance containing the message's paylod. The second parameter of `tell` is the sending actor. Since we're not in an actor context and do not need to receive a response from the actor, we can simply pass null. Lastly we respond with the `CHANGED` response code which indicates that the request was successful but did not result in the creation of a new resource. 
+In the `handlePUT` method we notify the server actor that a message has been received through a `CoapMessageReceived` instance containing the message's paylod. The second parameter of `tell` is the sending actor. Since we're not in an actor context and do not need to receive a response from the actor, we can simply pass null. Lastly we respond with the `CHANGED` response code which indicates that the request was successful but did not result in the creation of a new resource.
 
 
 
@@ -236,13 +247,14 @@ We can see that Copper used the CoAP resouce discovery mechanism to list all the
 
 # Deploying the application to the Raspberry Pi
 
-The last step we'll have to take is to get our application deployed to Raspberry. This is relatively simple if you've set it up according to our previous post, "{% postlink 2015-02-13-setting-up-a-border-router %}", because Java comes pre-installed on recent releases of Raspbian. 
+The last step we'll have to take is to get our application deployed to Raspberry. This is relatively simple if you've set it up according to our previous post, "{% postlink 2015-02-13-setting-up-a-border-router %}", because Java comes pre-installed on recent releases of Raspbian.
 
 To prepare our deployment we run `./activator stage`. This will bundle the application inside the `target/universal/stage` directory relative to the project's root. All we have to do then is rsync said directory to the Raspberry and run the application by changing into the `stage` directory on the Raspberry and running:
 
-    :bash:
-    JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" \
-        ./bin/play-californium
+~~~bash
+JAVA_OPTS="-Xmx64M -Xms16M -XX:PermSize=24M -XX:MaxPermSize=64M" \
+    ./bin/play-californium
+~~~
 {: .wide }
 
 **Note:** If you're deploying to a device that has e.g. Java 7 installed, but you built the application with Java 8, running it on the target will fail. To circumvent this, add the following to your `build.sbt` if necessary: `javacOptions ++= Seq("-source", "1.7", "-target", "1.7")`. This sets the Java compiler's target version to Java 7.
