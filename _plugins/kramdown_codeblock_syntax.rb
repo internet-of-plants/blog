@@ -1,5 +1,5 @@
 require 'kramdown'
-require 'pygments'
+#require 'pygments'
 
 module Kramdown
   module Converter
@@ -31,9 +31,9 @@ module Kramdown
 
       def pygmentize(code, lang)
         if lang
-          Pygments.highlight(code,
-            :lexer => lang,
-            :options => { :startinline => true, :encoding => 'utf-8', :nowrap => true })
+          # Pygments.highlight(code,
+          #   :lexer => lang,
+          #   :options => { :startinline => true, :encoding => 'utf-8', :nowrap => true })
         else
           escape_html(code)
         end

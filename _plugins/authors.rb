@@ -1,7 +1,7 @@
 module AuthorsInjector
   class Generator < Jekyll::Generator
     def generate(site)
-      site.posts.each do |post|
+      site.posts.docs.each do |post|
         inject_authors(post, site)
       end
     end

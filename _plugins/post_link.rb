@@ -51,10 +51,11 @@ eos
       end
 
       def render(context)
+        return
         site = context.registers[:site]
 
 
-        site.posts.each do |p|
+        site.posts.docs.each do |p|
           if @post == p
             return "<a href=\"#{ p.url }\">#{ @post.text ? @post.text.strip! : p.title }</a>"
           end
