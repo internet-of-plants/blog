@@ -18,7 +18,7 @@ To provide a connection between this network and the Internet, thus enabling Hum
 
 First we need to download a recent version of [Raspbian](http://www.raspbian.org/), a Linux distribution specifically made for the Raspberry Pi. This image will be flashed onto an SD Card to serve as the operating system. For this post we used __Rasbian Debian Wheezy, version December 2014__, which can be downloaded [here](http://www.raspberrypi.org/downloads). After the download finishes we follow the [comprehensive guide](http://elinux.org/RPi_Easy_SD_Card_Setup) on how to flash the image to the SD Card published by [elinux.org](http://elinux.org/RPi_Easy_SD_Card_Setup), which covers Windows, OS X and Linux users.
 
-Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet using a _good old_ ethernet cable.  
+Now we insert the freshly flashed SD Card into our RasPi, connect a monitor, plug in a keyboard and connect the RasPi to with the Internet using a _good old_ ethernet cable.
 
 ![](images/raspi/raspi-config2.png)
 
@@ -41,10 +41,11 @@ When booting the Raspberry Pi, you will be presented with an initial configurati
 
 To finish the initial installation, we do an update of Raspbian to get the most recent versions of the installed packages. To do this, we run in a terminal:
 
-    :bash:
-    sudo apt-get update &&
-        sudo apt-get upgrade &&
-        sudo apt-get dist-upgrade
+~~~bash
+sudo apt-get update &&
+    sudo apt-get upgrade &&
+    sudo apt-get dist-upgrade
+~~~
 
 **Warning:** Running a `dist-upgrade` is a potentially destructive operation, so it is **NOT** recommended if you don't have a dedicated installation of Raspian for this excercise.
 {: .alert .alert-danger }
@@ -72,7 +73,7 @@ which appends `ipv6` as last line to `/etc/modules`. The next time we boot, the 
 
 To provide connectivity to other IEEE 802.15.4 devices we use the [R-Idge](http://rosand-tech.com/products/r-idge/prod.html) 6LoWPAN USB router. After the USB stick is plugged in, it should create a new available network interface called `usb0`. We can check this entering `ifconfig usb0` which will provide us with information on the interface:
 
-    usb0      Link encap:Ethernet  HWaddr 02:12:4b:e4:0a:83  
+    usb0      Link encap:Ethernet  HWaddr 02:12:4b:e4:0a:83
     inet6 addr: fe80::12:4bff:fee4:a83/64 Scope:Link
     UP BROADCAST RUNNING MULTICAST  MTU:1280  Metric:1
     RX packets:0 errors:0 dropped:0 overruns:0 frame:0
@@ -85,9 +86,9 @@ Note: if you are presented with (or similar):
     pi@raspberrypi ~ $ ifconfig usb0
     usb0: error fetching interface information: Device not found
 
-the interface has probably received a different name from the operating system. You can list all available and active interfaces by entering `ifconfig`. 
+the interface has probably received a different name from the operating system. You can list all available and active interfaces by entering `ifconfig`.
 
-To verify if any of shown network interface is our R-Idge USB router, we enter `dmesg -T | tail | grep RNDIS`.  
+To verify if any of shown network interface is our R-Idge USB router, we enter `dmesg -T | tail | grep RNDIS`.
 We will be presented with the following output:
 
     [Mon Jan 26 12:39:27 2015] rndis_host 1-1.3.4:1.0 usb0: register 'rndis_host' at usb-bcm2708_usb-1.3.4, RNDIS device, 02:12:4b:e4:0a:83
@@ -96,18 +97,19 @@ We can then compare the shown hardware address (at the far end of the shown line
 
 ## Configuring the R-Idge 6LoWPAN router
 
-To configure the router, we need to use the provided _Configuration program_ from [Rosand Technologies](http://rosand-tech.com/products/r-idge/doc.html). Unfortunately the provided binary/installation packages are not compiled for being used on the Raspbian, so we need to build them from source. For the build we need to install the tools required to build the source by entering 
+To configure the router, we need to use the provided _Configuration program_ from [Rosand Technologies](http://rosand-tech.com/products/r-idge/doc.html). Unfortunately the provided binary/installation packages are not compiled for being used on the Raspbian, so we need to build them from source. For the build we need to install the tools required to build the source by entering
 
     sudo apt-get install bison flex wget
 
 After `bison` and `flex` are installed we can proceed to build the configuration program:
 
-    :bash:
-    wget http://rosand-tech.com/downloads/cfgtool-1.00.tar.gz &&
-        tar -xvzf cfgtool-1.00.tar.gz &&
-        cd cfgtool-1.00 &&
-        ./configure &&
-        make
+~~~bash
+wget http://rosand-tech.com/downloads/cfgtool-1.00.tar.gz &&
+    tar -xvzf cfgtool-1.00.tar.gz &&
+    cd cfgtool-1.00 &&
+    ./configure &&
+    make
+~~~
 {: .wide }
 
 After the build finishes, we create a new directory for the compiled binary (`mkdir ../cfgtool-bin`), and copy the relevant files there by entering
@@ -115,16 +117,17 @@ After the build finishes, we create a new directory for the compiled binary (`mk
     cp cfgtool ../cfgtool-bin/ &&
         cp cftool.conf ../cfgtool-bin/
 
-Now we change the directory to `cd ../cfgtool-bin` and configure our R-Idge USB router. To have a look in the current setup of the R-Idge USB router, we enter 
-    
-    :bash:
-    ./cfgtool -p ridge \
-              -c serial \
-              -C ./cfgtool.conf \
-              -U channel:r: \
-              -U power:r: \
-              -U panid:r: \
-              -U prefix:r:
+Now we change the directory to `cd ../cfgtool-bin` and configure our R-Idge USB router. To have a look in the current setup of the R-Idge USB router, we enter
+
+~~~bash
+./cfgtool -p ridge \
+          -c serial \
+          -C ./cfgtool.conf \
+          -U channel:r: \
+          -U power:r: \
+          -U panid:r: \
+          -U prefix:r:
+~~~
 
 This will present us with the following (or similar):
 
@@ -135,12 +138,13 @@ This will present us with the following (or similar):
 
 The most interesting values here are the `channel` and the `panid`. These values must both be the same for all  communication participants, i.e. the R-Idge router and any node in the network. To change these values we set the according parameters to write (exchange `:r:` with `:w:` in the command above) and provide an appropriate value, e.g we set channel to 22 and the panid to 0x123:
 
-    :bash:
-    ./cfgtool -p ridge \
-              -c serial \
-              -C ./cfgtool.conf \
-              -U channel:w:22: \
-              -U panid:w:0x123:
+~~~bash
+./cfgtool -p ridge \
+          -c serial \
+          -C ./cfgtool.conf \
+          -U channel:w:22: \
+          -U panid:w:0x123:
+~~~
 
 Which should result in the following output:
 

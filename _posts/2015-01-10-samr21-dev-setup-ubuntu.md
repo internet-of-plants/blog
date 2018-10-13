@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The Atmel SAM R21 
+title: The Atmel SAM R21
 subtitle: Setting up a RIOT development environment
 categories: jekyll update
 author: lucas
@@ -39,36 +39,38 @@ In addition it is recommendable to update Ubuntu to the latest version after ins
 # Building OpenOCD
 
 The Open On-Chip-Debugger (OpenOCD) is used by the RIOT build system for flashing the application onto the board and to debug it. The current release (v0.8.0) of [OpenOCD](http://openocd.sourceforge.net/), however, does not contain configuration files for the SAM R21 board, so it has to be built from source. OpenOCD also requires hidapi, which is not available as a package on Ubuntu 14.10. The following script will clone, build and install hidapi if all goes well:
-    
-    :bash:
-    TMP=$(mktemp) &&
-        rm -r $TMP &&
-        mkdir -p $TMP &&
-        cd $TMP &&
-        git clone http://github.com/signal11/hidapi.git &&
-        cd hidapi &&
-        ./bootstrap &&
-        ./configure &&
-        make &&
-        sudo make install &&
-        sudo ln -s /usr/local/lib/libhidapi-hidraw.so.0 \
-            /usr/lib/libhidapi-hidraw.so.0
+
+~~~bash
+TMP=$(mktemp) &&
+    rm -r $TMP &&
+    mkdir -p $TMP &&
+    cd $TMP &&
+    git clone http://github.com/signal11/hidapi.git &&
+    cd hidapi &&
+    ./bootstrap &&
+    ./configure &&
+    make &&
+    sudo make install &&
+    sudo ln -s /usr/local/lib/libhidapi-hidraw.so.0 \
+        /usr/lib/libhidapi-hidraw.so.0
+~~~
 
 Now that all requirements are installed, OpenOCD can be built:
 
-    :bash:
-    TMP=$(mktemp) &&
-        rm -r $TMP &&
-        mkdir -p $TMP &&
-        cd $TMP &&
-        git clone https://github.com/watr-li/OpenOCD.git openocd &&
-        cd openocd &&
-        ./bootstrap &&
-        ./configure --enable-maintainer-mode \
-                    --enable-cmsis-dap \
-                    --enable-hidapi-libusb &&
-        make &&
-        sudo make install
+~~~bash
+TMP=$(mktemp) &&
+    rm -r $TMP &&
+    mkdir -p $TMP &&
+    cd $TMP &&
+    git clone https://github.com/watr-li/OpenOCD.git openocd &&
+    cd openocd &&
+    ./bootstrap &&
+    ./configure --enable-maintainer-mode \
+                --enable-cmsis-dap \
+                --enable-hidapi-libusb &&
+    make &&
+    sudo make install
+~~~
 {: .wide }
 
 
@@ -92,13 +94,14 @@ The 64-bit version of the "[GNU Tools for ARM Embedded Processors](https://launc
 
 Now that all the requirements are set up, a RIOT-based application can be built. Cloning RIOT (via [github.com/RIOT](https://github.com/RIOT-OS/RIOT)), switching to the directory of the example hello world application and building it is performed by the following script:
 
-    :bash:
-    git clone https://github.com/RIOT-OS/RIOT.git &&
-        cd RIOT/examples/hello-world &&
-        export BOARD=samr21-xpro &&
-        make
+~~~bash
+git clone https://github.com/RIOT-OS/RIOT.git &&
+    cd RIOT/examples/hello-world &&
+    export BOARD=samr21-xpro &&
+    make
+~~~
 
-The only non-standard line here is the definition of the `BOARD` environment variable which tells the RIOT build system which hardware we are targeting. 
+The only non-standard line here is the definition of the `BOARD` environment variable which tells the RIOT build system which hardware we are targeting.
 
 
 # Preparations for flashing
@@ -107,7 +110,7 @@ In order to be able to flash the application onto the board without root privile
 
     sudo usermod --append --groups dialout <our username>
 
-This is required in order to capture the output from the board's serial console, which is mounted as `/dev/ttyACM[0-9]+` and belongs to the `dialout` group by default. 
+This is required in order to capture the output from the board's serial console, which is mounted as `/dev/ttyACM[0-9]+` and belongs to the `dialout` group by default.
 
 **Note:** You need to re-login after adding the user to the group.
 {: .alert .alert-warning }
@@ -129,9 +132,10 @@ The next step is to get the application onto the board, run it and see the outpu
 
 In this terminal we start a [pyterm](http://pyterm.sourceforge.net/) instance, a serial port terminal emulator written in Python, listening to the output of the board:
 
-    :bash:
-    export BOARD=samr21-xpro &&
-        make term
+~~~bash
+export BOARD=samr21-xpro &&
+    make term
+~~~
 
 This should result in the following being printed, after which pyterm waits for output from the board:
 
@@ -144,9 +148,10 @@ This should result in the following being printed, after which pyterm waits for 
 
 Now we can switch to the other terminal window in which we will invoke the commands to flash the application onto the board:
 
-    :bash:
-    export BOARD=samr21-xpro &&
-        make flash
+~~~bash
+export BOARD=samr21-xpro &&
+    make flash
+~~~
 
 The CMSIS-DAP interface for flashing and debugging [is quite slow](http://sourceforge.net/p/openocd/mailman/message/32496519/) (should be around 2KiB/s). So when flashing, you might need to wait a little longer. You can also apply an [OpenOCD patch](http://openocd.zylin.com/#/c/2356/) that increases flashing speed by 50-100%.
 {: .alert .alert-warning }
@@ -173,10 +178,11 @@ If you want to use native mode, the only thing required is a 32-bit version of l
 
 After installing this dependency you can then return to the directory of the example hello world application and invoke
 
-    :bash:
-    export BOARD=native &&
-        make &&
-        make term
+~~~bash
+export BOARD=native &&
+    make &&
+    make term
+~~~
 
 For native mode, the build system creates a 32-bit binary in the `bin/native` directory. The only thing `make term` then has to do is running that binary. You should see the same output as when running the application on the board, except for the board's name and the MCU.
 
