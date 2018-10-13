@@ -1,69 +1,20 @@
 module Jekyll
   module Tags
-    class PostLinkComparer
-      MATCHER = /^(.+\/)*(\d+-\d+-\d+)-([^\s]*)(\s.*)?$/
-
-      attr_accessor :date, :slug, :text
-
-      def initialize(name)
-        all, path, date, slug, text = *name.sub(/^\//, "").match(MATCHER)
-        raise ArgumentError.new("'#{name}' does not contain valid date and/or title") unless all
-        @slug = path ? path + slug : slug
-        @date = Time.parse(date)
-        @text = text
-      end
-
-      def ==(other)
-        slug == post_slug(other)
-
-        # disabled the date check below (used in post_url.rb)
-        # otherwise posts with a custom date front-matter will fail if it's different to the slug
-
-        #&& date.year  == other.date.year &&
-        #date.month == other.date.month &&
-        #date.day   == other.date.day
-      end
-
-      private
-      def post_slug(other)
-        path = other.name.split("/")[0...-1].join("/")
-        if path.nil? || path == ""
-          other.slug
-        else
-          path + '/' + other.slug
-        end
-      end
-    end
 
     class PostLink < Liquid::Tag
       def initialize(tag_name, post, tokens)
         super
-        @orig_post = post.strip
-        begin
-          @post = PostLinkComparer.new(@orig_post)
-        rescue
-          raise ArgumentError.new <<-eos
-Could not parse name of post "#{@orig_post}" in tag 'post_link'.
 
-Make sure the post exists and the name and date is correct.
-eos
-        end
+        @post, *title = post.strip.split(' ')
+        @title = title.join(' ')
       end
 
       def render(context)
-        return
         site = context.registers[:site]
 
-
         site.posts.docs.each do |p|
-          if @post == p
-            return "<a href=\"#{ p.url }\">#{ @post.text ? @post.text.strip! : p.title }</a>"
-          end
-        end
-
-        site.drafts.each do |p|
-          if @post == p
-            return "<a href=\"#{ p.url }\">#{ @post.text ? @post.text.strip! : p.title }</a>"
+          if @post == File.basename(p.path, p.extname)
+            return "<a href=\"#{ p.url }\">#{ @title ? @title : p.data['title'] }</a>"
           end
         end
 
